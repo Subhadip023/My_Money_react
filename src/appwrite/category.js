@@ -47,6 +47,20 @@ class CategoryService {
             return false;
         }
     }
+
+    async updateCategory(documentId, { name, type }) {
+        try {
+            return await this.databases.updateDocument(
+                conf.appwriteDataBaseId,
+                conf.appwriteCollectionIDCategory,
+                documentId,
+                { name, type }
+            )
+        } catch (error) {
+            console.error("Appwrite service :: updateCategory :: error", error);
+            throw error;
+        }
+    }
 }
 
 const categoryService = new CategoryService()

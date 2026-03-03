@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { cn } from '../../utils'
 
 const Modal = ({ isOpen, onClose, title, children }) => {
@@ -15,7 +16,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
 
     if (!isOpen) return null
 
-    return (
+    return createPortal(
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 transition-all duration-300">
             {/* Backdrop */}
             <div
@@ -48,7 +49,8 @@ const Modal = ({ isOpen, onClose, title, children }) => {
                     {children}
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     )
 }
 

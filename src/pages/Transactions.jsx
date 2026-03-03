@@ -1,17 +1,60 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { cn } from '../utils'
-
-const transactions = [
-    { id: 1, label: 'Starbucks Coffee', date: '2026-03-01', type: 'expense', amount: 5.50, category: 'Food' },
-    { id: 2, label: 'Freelance Payment', date: '2026-03-02', type: 'income', amount: 1200.00, category: 'Work' },
-    { id: 3, label: 'Apple Subscription', date: '2026-03-03', type: 'expense', amount: 14.99, category: 'Digital' },
-    { id: 4, label: 'Rent Refund', date: '2026-02-28', type: 'income', amount: 50.00, category: 'Housing' },
-    { id: 5, label: 'Amazon Purchase', date: '2026-02-27', type: 'expense', amount: 124.20, category: 'Shopping' },
-]
+import transactionService from '../appwrite/transaction'
+import { useSelector } from 'react-redux'
+import toast from 'react-hot-toast'
+import AddTransactionModal from '../components/ui/AddTransactionModal'
+import EditTransactionModal from '../components/ui/EditTransactionModal'
 
 export default function Transactions() {
+    const [transactions, setTransactions] = useState([])
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+    const [selectedTransaction, setSelectedTransaction] = useState(null)
+    const user = useSelector((state) => state.auth.user)
+
+    const fetchTransactions = async () => {
+        try {
+            const res = await transactionService.getTransactions({ userId: user.$id })
+            setTransactions(res.documents)
+        } catch (error) {
+            console.error(error)
+            toast.error('Failed to fetch transactions')
+        }
+    }
+
+    useEffect(() => {
+        if (user) fetchTransactions()
+    }, [user])
+
+    const handleTransactionAdded = () => {
+        fetchTransactions()
+    }
+
+    const handleTransactionUpdated = () => {
+        fetchTransactions()
+    }
+
+    const handleEdit = (tx) => {
+        setSelectedTransaction(tx)
+        setIsEditModalOpen(true)
+    }
+
+    const handleDelete = async (id) => {
+        const ok = window.confirm("Are you sure you want to delete this transaction?");
+        if (!ok) return;
+
+        const success = await transactionService.deleteTransaction(id);
+        if (success) {
+            setTransactions(prev => prev.filter(tx => tx.$id !== id));
+            toast.success("Transaction deleted");
+        } else {
+            toast.error("Failed to delete transaction");
+        }
+    }
+
     return (
-        <div className='max-w-5xl mx-auto space-y-10'>
+        <div className='w-full space-y-10'>
             {/* Header */}
             <div className='flex flex-col md:flex-row md:items-center justify-between gap-6'>
                 <div className="space-y-2">
@@ -20,6 +63,17 @@ export default function Transactions() {
                         Detailed history of your income and expenditures across all accounts.
                     </p>
                 </div>
+                <div className='flex gap-4'>
+                </div>
+                <button
+                    onClick={() => setIsModalOpen(true)}
+                    className='px-8 py-4 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-lg transition-all active:scale-95 shadow-xl shadow-indigo-600/20 flex items-center gap-2 cursor-pointer'
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-5 h-5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                    Add Transaction
+                </button>
             </div>
 
             {/* Premium Transaction List */}
@@ -31,11 +85,12 @@ export default function Transactions() {
                             <th className='px-8 py-5 text-sm font-bold uppercase tracking-widest text-neutral-400'>Date</th>
                             <th className='px-8 py-5 text-sm font-bold uppercase tracking-widest text-neutral-400'>Category</th>
                             <th className='px-8 py-5 text-sm font-bold uppercase tracking-widest text-neutral-400 text-right'>Amount</th>
+                            <th className='px-8 py-5 text-sm font-bold uppercase tracking-widest text-neutral-400 text-right'>Action</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700/50">
                         {transactions.map((tx) => (
-                            <tr key={tx.id} className='hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors'>
+                            <tr key={tx.$id} className='hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors group'>
                                 <td className='px-8 py-6'>
                                     <div className="flex items-center gap-4">
                                         <div className={cn(
@@ -44,15 +99,18 @@ export default function Transactions() {
                                         )}>
                                             {tx.type === 'income' ? '↙' : '↗'}
                                         </div>
-                                        <span className="font-bold text-neutral-900 dark:text-white">{tx.label}</span>
+                                        <div className='flex flex-col'>
+                                            <span className="font-bold text-neutral-900 dark:text-white">{tx.label}</span>
+                                            <span className='text-xs text-neutral-400 font-medium'>{tx.accounts?.accountName}</span>
+                                        </div>
                                     </div>
                                 </td>
                                 <td className='px-8 py-6 text-neutral-500 dark:text-neutral-400 font-medium'>
-                                    {new Date(tx.date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                    {new Date(tx.$createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}
                                 </td>
                                 <td className='px-8 py-6'>
                                     <span className="px-3 py-1 rounded-full bg-neutral-100 dark:bg-neutral-700 text-xs font-bold text-neutral-600 dark:text-neutral-300">
-                                        {tx.category}
+                                        {tx.categories?.name || 'Uncategorized'}
                                     </span>
                                 </td>
                                 <td className={cn(
@@ -61,11 +119,51 @@ export default function Transactions() {
                                 )}>
                                     {tx.type === 'income' ? '+' : '-'}₹{tx.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                                 </td>
+                                <td className='px-8 py-6 text-right'>
+                                    <div className="flex justify-end gap-2">
+                                        <button
+                                            onClick={() => handleEdit(tx)}
+                                            className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 text-indigo-600 transition-colors"
+                                            title="Edit"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                                            </svg>
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(tx.$id)}
+                                            className="p-2 rounded-lg hover:bg-rose-50 text-rose-500 transition-colors"
+                                            title="Delete"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
+                {transactions.length === 0 && (
+                    <div className="p-20 text-center text-neutral-500 font-medium">
+                        No transactions found.
+                    </div>
+                )}
             </div>
+
+            <AddTransactionModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onTransactionAdded={handleTransactionAdded}
+            />
+
+            <EditTransactionModal
+                isOpen={isEditModalOpen}
+                onClose={() => setIsEditModalOpen(false)}
+                transaction={selectedTransaction}
+                onTransactionUpdated={handleTransactionUpdated}
+            />
         </div>
     )
 }

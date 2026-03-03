@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { setLoading } from '../../redux/uiSlice'
@@ -7,35 +7,39 @@ import Modal from './Modal'
 import { cn } from '../../utils'
 import categoryService from '../../appwrite/category'
 
-const AddCategoryModal = ({ isOpen, onClose, onCategoryAdded }) => {
-    const { register, handleSubmit, reset, formState: { errors } } = useForm()
+const EditCategoryModal = ({ isOpen, onClose, category, onCategoryUpdated }) => {
+    const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm()
     const dispatch = useDispatch()
-    const user = useSelector((state) => state.auth.user)
     const loading = useSelector((state) => state.ui.loading)
 
+    useEffect(() => {
+        if (category) {
+            setValue("name", category.name)
+            setValue("type", category.type)
+        }
+    }, [category, setValue])
+
     const onSubmit = async (data) => {
-        if (loading) return
         dispatch(setLoading(true))
         try {
-            const res = await categoryService.createCategory({
+            const res = await categoryService.updateCategory(category.$id, {
                 name: data.name,
-                type: data.type,
-                userId: user.$id
+                type: data.type
             })
             if (res) {
-                onCategoryAdded(res)
-                reset()
+                onCategoryUpdated(res)
                 onClose()
+                toast.success("Category updated successfully")
             }
         } catch (error) {
-            toast.error(error.message || 'Failed to add category.')
+            toast.error(error.message || 'Failed to update category.')
         } finally {
             dispatch(setLoading(false))
         }
     }
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title="Add New Category">
+        <Modal isOpen={isOpen} onClose={onClose} title="Edit Category">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div>
                     <label className="block text-sm font-bold mb-2 ml-1 text-neutral-700 dark:text-neutral-300">
@@ -81,8 +85,6 @@ const AddCategoryModal = ({ isOpen, onClose, onCategoryAdded }) => {
                     )}
                 </div>
 
-
-
                 <div className="pt-4 flex gap-4">
                     <button
                         type="button"
@@ -99,7 +101,7 @@ const AddCategoryModal = ({ isOpen, onClose, onCategoryAdded }) => {
                             loading && "opacity-50 cursor-not-allowed"
                         )}
                     >
-                        {loading ? 'Adding...' : 'Create Category'}
+                        {loading ? 'Saving...' : 'Save Changes'}
                     </button>
                 </div>
             </form>
@@ -107,4 +109,4 @@ const AddCategoryModal = ({ isOpen, onClose, onCategoryAdded }) => {
     )
 }
 
-export default AddCategoryModal
+export default EditCategoryModal

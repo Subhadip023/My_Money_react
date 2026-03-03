@@ -4,10 +4,10 @@ const conf = {
     appwriteDataBaseId: String(import.meta.env.VITE_APPWRITE_DATABASE_ID),
     appwriteCollectionIDAccount: String(import.meta.env.VITE_APPWRITE_COLLECTION_ID_ACCOUNT),
     appwriteCollectionIDCategory: String(import.meta.env.VITE_APPWRITE_COLLECTION_ID_CATEGORY),
+    appwriteCollectionIDTransaction: String(import.meta.env.VITE_APPWRITE_COLLECTION_ID_TRANSACTION),
     appwriteCollectionIDUser: String(import.meta.env.VITE_APPWRITE_COLLECTION_ID_USER),
     appwriteBucketID: String(import.meta.env.VITE_APPWRITE_BUCKET_ID)
 }
 
-console.log(conf)
 
 export default conf

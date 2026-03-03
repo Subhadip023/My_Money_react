@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import AddAccountModal from '../components/ui/AddAccountModal'
 import EditAccountModal from '../components/ui/EditAccountModal'
+import TransferModal from '../components/ui/TransferModal'
 import { cn } from '../utils'
 import accountService from '../appwrite/account'
 import toast from 'react-hot-toast'
@@ -8,6 +9,7 @@ import { useSelector } from 'react-redux'
 
 export default function Accounts() {
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const [isTransferModalOpen, setIsTransferModalOpen] = useState(false)
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
     const [selectedAccount, setSelectedAccount] = useState(null)
     const [accounts, setAccounts] = useState([])
@@ -26,6 +28,19 @@ export default function Accounts() {
         }
         fetchAccounts()
     }, [user.$id])
+
+    const fetchAccounts = async () => {
+        try {
+            const res = await accountService.getAccounts({ userId: user.$id })
+            setAccounts(res.documents)
+        } catch (error) {
+            toast.error('Failed to fetch accounts')
+        }
+    }
+
+    const handleTransferComplete = () => {
+        fetchAccounts()
+    }
 
     const handleDeleteAccount = async (documentId) => {
         try {
@@ -56,7 +71,7 @@ export default function Accounts() {
     }
 
     return (
-        <div className='max-w-5xl mx-auto space-y-10'>
+        <div className='w-full space-y-10'>
             {/* Header Section */}
             <div className='flex flex-col md:flex-row md:items-center justify-between gap-6'>
                 <div className="space-y-2">
@@ -65,15 +80,26 @@ export default function Accounts() {
                         Manage your financial institutions and monitor individual balances.
                     </p>
                 </div>
-                <button
-                    onClick={() => setIsModalOpen(true)}
-                    className='px-8 py-4 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-lg transition-all active:scale-95 shadow-xl shadow-indigo-600/20 flex items-center gap-2 cursor-pointer'
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-5 h-5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                    </svg>
-                    Add Account
-                </button>
+                <div className='flex gap-4'>
+                    <button
+                        className='px-8 py-4 rounded-2xl bg-white dark:bg-neutral-800 border-2 border-neutral-100 dark:border-neutral-700 text-neutral-900 dark:text-white font-black text-lg transition-all active:scale-95 shadow-sm hover:bg-neutral-50 flex items-center gap-2 cursor-pointer'
+                        onClick={() => setIsTransferModalOpen(true)}
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5 text-indigo-600">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+                        </svg>
+                        Transfer
+                    </button>
+                    <button
+                        onClick={() => setIsModalOpen(true)}
+                        className='px-8 py-4 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-lg transition-all active:scale-95 shadow-xl shadow-indigo-600/20 flex items-center gap-2 cursor-pointer'
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-5 h-5">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        Add Account
+                    </button>
+                </div>
             </div>
             <div className='flex items-center justify-end gap-x-5'>
                 <h2 className='text-xl font-black tracking-tight'>Total Balance</h2>
@@ -146,6 +172,12 @@ export default function Accounts() {
                 onClose={() => setIsEditModalOpen(false)}
                 account={selectedAccount}
                 onAccountUpdated={handleUpdateAccount}
+            />
+
+            <TransferModal
+                isOpen={isTransferModalOpen}
+                onClose={() => setIsTransferModalOpen(false)}
+                onTransferComplete={handleTransferComplete}
             />
         </div>
     )

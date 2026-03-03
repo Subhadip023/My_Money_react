@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import AddCategoryModal from '../components/ui/AddCategoryModal'
+import EditCategoryModal from '../components/ui/EditCategoryModal'
 import { cn } from '../utils'
 import categoryService from '../appwrite/category'
 import toast from 'react-hot-toast'
@@ -7,6 +8,8 @@ import { useSelector } from 'react-redux'
 
 export default function Categories() {
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+    const [selectedCategory, setSelectedCategory] = useState(null)
     const [categories, setCategories] = useState([])
     const user = useSelector((state) => state.auth.user)
 
@@ -28,8 +31,19 @@ export default function Categories() {
         toast.success('Category added successfully')
     }
 
+    const handleEdit = (category) => {
+        setSelectedCategory(category)
+        setIsEditModalOpen(true)
+    }
+
+    const handleUpdateCategory = (updatedCategory) => {
+        setCategories((prev) => prev.map((cat) =>
+            cat.$id === updatedCategory.$id ? updatedCategory : cat
+        ))
+    }
+
     const handleDelete = async (id) => {
-        const ok = window.confirm("Are you sure you want to delete this category?");
+        const ok = window.confirm("Are you sure you want to delete this category? This might affect transactions using this category.");
         if (!ok) return;
 
         const success = await categoryService.deleteCategory(id);
@@ -42,7 +56,7 @@ export default function Categories() {
     }
 
     return (
-        <div className='max-w-5xl mx-auto space-y-10'>
+        <div className='w-full space-y-10'>
             <div className='flex flex-col md:flex-row md:items-center justify-between gap-6'>
                 <div className="space-y-2">
                     <h1 className='text-4xl font-black tracking-tight'>Categories</h1>
@@ -92,12 +106,20 @@ export default function Categories() {
                                     </span>
                                 </td>
                                 <td className='px-8 py-6 text-right'>
-                                    <button
-                                        onClick={() => handleDelete(category.$id)}
-                                        className="text-rose-500 hover:text-rose-600 font-bold text-sm transition-colors"
-                                    >
-                                        Delete
-                                    </button>
+                                    <div className="flex justify-end gap-3">
+                                        <button
+                                            onClick={() => handleEdit(category)}
+                                            className="px-4 py-2 rounded-xl border border-indigo-200 dark:border-indigo-500/20 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 hover:text-white font-bold text-sm transition-all cursor-pointer"
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(category.$id)}
+                                            className="px-4 py-2 rounded-xl border border-rose-200 dark:border-rose-500/20 text-rose-500 hover:bg-rose-500 hover:text-white font-bold text-sm transition-all cursor-pointer"
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         ))}
@@ -115,6 +137,14 @@ export default function Categories() {
                 onClose={() => setIsModalOpen(false)}
                 onCategoryAdded={handleAddCategory}
             />
+
+            <EditCategoryModal
+                isOpen={isEditModalOpen}
+                onClose={() => setIsEditModalOpen(false)}
+                category={selectedCategory}
+                onCategoryUpdated={handleUpdateCategory}
+            />
         </div>
     )
 }
+
