@@ -18,7 +18,7 @@ import { setUser, logout } from './redux/authSlice'
 import { setLoading } from './redux/uiSlice'
 import Loader from './components/ui/Loader'
 import ProtectedRoutes from './components/ProtectedRoutes'
-import GusestRoutes from './components/GusestRoutes'
+import GuestRoutes from './components/GuestRoutes'
 import { Toaster } from 'react-hot-toast'
 
 function App() {
@@ -67,7 +67,7 @@ function App() {
         )}
       </Routes> */}
       <Routes>
-        <Route element={<GusestRoutes />}>
+        <Route element={<GuestRoutes />}>
           <Route path="/" element={<GuestLayout />}>
             <Route index element={<Home />} />
             <Route path="login" element={<Login />} />
