@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import Sidebar from '../components/Sidebar'
 import { cn } from '../utils'
 import Footer from '../components/Footer'
+import UserTour from '../components/ui/UserTour'
 
 export const MainLayout = () => {
     const dispatch = useDispatch()
@@ -22,6 +23,7 @@ export const MainLayout = () => {
             "bg-white text-neutral-900",
             "dark:bg-neutral-900 dark:text-white"
         )} >
+            <UserTour />
             <Sidebar
                 isOpen={isSidebarOpen}
                 onClose={() => setIsSidebarOpen(false)}

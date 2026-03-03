@@ -90,6 +90,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                             <Link
                                 key={item.path}
                                 to={item.path}
+                                id={item.name === 'Accounts' ? 'tour-sidebar-accounts' : undefined}
                                 title={item.name}
                                 onClick={() => { if (window.innerWidth < 768) onClose() }}
                                 className={cn(

@@ -49,7 +49,7 @@ const EditAccountModal = ({ isOpen, onClose, account, onAccountUpdated }) => {
                     <input
                         {...register("name", { required: "Name is required" })}
                         className={cn(
-                            "w-full px-5 py-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800 border-2 transition-all outline-none",
+                            "w-full px-5 py-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800 border-2 transition-all outline-none text-neutral-700 dark:text-neutral-300",
                             errors.name
                                 ? "border-rose-500/50 focus:border-rose-500"
                                 : "border-neutral-100 dark:border-neutral-700 focus:border-indigo-500"
@@ -70,7 +70,7 @@ const EditAccountModal = ({ isOpen, onClose, account, onAccountUpdated }) => {
                     <select
                         {...register("type", { required: "Type is required" })}
                         className={cn(
-                            "w-full px-5 py-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800 border-2 transition-all outline-none",
+                            "w-full px-5 py-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800 border-2 transition-all outline-none text-neutral-700 dark:text-neutral-300",
                             errors.type
                                 ? "border-rose-500/50 focus:border-rose-500"
                                 : "border-neutral-100 dark:border-neutral-700 focus:border-indigo-500"
@@ -97,7 +97,7 @@ const EditAccountModal = ({ isOpen, onClose, account, onAccountUpdated }) => {
                             step="0.01"
                             {...register("balance", { required: "Balance is required" })}
                             className={cn(
-                                "w-full px-10 py-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800 border-2 transition-all outline-none",
+                                "w-full px-10 py-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800 border-2 transition-all outline-none text-neutral-700 dark:text-neutral-300",
                                 errors.balance
                                     ? "border-rose-500/50 focus:border-rose-500"
                                     : "border-neutral-100 dark:border-neutral-700 focus:border-indigo-500"
