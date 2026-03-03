@@ -17,7 +17,7 @@ function GuestLayout() {
 
             <main className={cn(
                 "flex-1 flex flex-col",
-                isAuthPage ? "items-center justify-center p-4 md:p-6" : "container mx-auto px-4 pt-12 max-w-5xl"
+                isAuthPage ? "items-center justify-center p-4 md:p-6" : "container mx-auto px-4 pt-12 max-w-7xl"
             )}>
                 {isAuthPage ? (
                     <div className="w-full max-w-6xl animate-in fade-in zoom-in-95 duration-500">

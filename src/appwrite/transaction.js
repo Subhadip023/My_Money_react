@@ -46,11 +46,29 @@ class TransactionService {
 
     async deleteTransaction(documentId) {
         try {
+            // 1. Fetch transaction metadata to know how much to reverse
+            const tx = await this.databases.getDocument(
+                conf.appwriteDataBaseId,
+                conf.appwriteCollectionIDTransaction,
+                documentId
+            );
+
+            // 2. Reverse balance impact
+            // If it was income, we SUBTRACT it now. If expense, we ADD it back.
+            const reverseType = tx.type === 'income' ? 'expense' : 'income';
+            await accountService.updateAccountBalance({
+                userId: tx.user_id,
+                accountId: tx.accounts?.$id || tx.accounts,
+                amount: tx.amount,
+                type: reverseType
+            });
+
+            // 3. Delete the document
             await this.databases.deleteDocument(
                 conf.appwriteDataBaseId,
                 conf.appwriteCollectionIDTransaction,
                 documentId
-            )
+            );
             return true;
         } catch (error) {
             console.error("Appwrite service :: deleteTransaction :: error", error);
@@ -58,8 +76,33 @@ class TransactionService {
         }
     }
 
-    async updateTransaction(documentId, { label, amount, type, accountId, categoryId }) {
+    async updateTransaction(documentId, { label, amount, type, accountId, categoryId, userId }) {
         try {
+            // 1. Fetch original transaction to reverse its impact
+            const oldTx = await this.databases.getDocument(
+                conf.appwriteDataBaseId,
+                conf.appwriteCollectionIDTransaction,
+                documentId
+            );
+
+            // 2. Reverse OLD transaction balance
+            const oldReverseType = oldTx.type === 'income' ? 'expense' : 'income';
+            await accountService.updateAccountBalance({
+                userId: oldTx.user_id,
+                accountId: oldTx.accounts?.$id || oldTx.accounts,
+                amount: oldTx.amount,
+                type: oldReverseType
+            });
+
+            // 3. Apply NEW transaction balance
+            await accountService.updateAccountBalance({
+                userId: userId,
+                accountId: accountId,
+                amount: amount,
+                type: type
+            });
+
+            // 4. Update the document
             return await this.databases.updateDocument(
                 conf.appwriteDataBaseId,
                 conf.appwriteCollectionIDTransaction,
@@ -71,7 +114,7 @@ class TransactionService {
                     accounts: accountId,
                     categories: categoryId
                 }
-            )
+            );
         } catch (error) {
             console.error("Appwrite service :: updateTransaction :: error", error);
             throw error;
