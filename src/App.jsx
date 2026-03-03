@@ -7,11 +7,9 @@ import Accounts from './pages/Accounts'
 import Categories from './pages/Categories'
 import Transactions from './pages/Transactions'
 import GuestLayout from './layouts/GuestLayout'
-import AuthLayout from './layouts/AuthLayout'
 import Login from './pages/Login'
 import Register from './pages/Register'
-import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
 import { useEffect } from 'react'
 import authService from './appwrite/auth'
 import { setUser, logout } from './redux/authSlice'
@@ -20,10 +18,10 @@ import Loader from './components/ui/Loader'
 import ProtectedRoutes from './components/ProtectedRoutes'
 import GuestRoutes from './components/GuestRoutes'
 import { Toaster } from 'react-hot-toast'
+import NotFound from './pages/NotFound'
 
 function App() {
   const dispatch = useDispatch()
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated)
 
   useEffect(() => {
     dispatch(setLoading(true))
@@ -43,42 +41,30 @@ function App() {
       })
   }, [dispatch])
 
-  const navigate = useNavigate()
-
   return (
     <>
       <Toaster position="top-right" reverseOrder={false} />
       <Loader />
-      {/* <Routes>
-        {isAuthenticated ? (
-          <Route path="/" element={<MainLayout />}>
-            <Route index element={<Home />} />
-            <Route path="about" element={<About />} />
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="accounts" element={<Accounts />} />
-            <Route path="transactions" element={<Transactions />} />
-          </Route>
-        ) : (
-          <Route path="/" element={<GuestLayout />}>
-            <Route index element={<Home />} />
-            <Route path="login" element={<Login />} />
-            <Route path="register" element={<Register />} />
-          </Route>
-        )}
-      </Routes> */}
       <Routes>
-        <Route element={<GuestRoutes />}>
-          <Route path="/" element={<GuestLayout />}>
-            <Route index element={<Home />} />
+        {/* Everything inside GuestLayout by default */}
+        <Route element={<GuestLayout />}>
+          {/* Publicly Shared Pages */}
+          <Route index element={<Home />} />
+          <Route path="about" element={<About />} />
+
+          {/* Authenticated Guests Only (Login/Register) */}
+          <Route element={<GuestRoutes />}>
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />
-            <Route path="about" element={<About />} />
           </Route>
+
+          {/* Fallback for anything not caught by ProtectedRoutes */}
+          <Route path="*" element={<NotFound />} />
         </Route>
+
+        {/* Dashbaord/Protected Pages (MainLayout) */}
         <Route element={<ProtectedRoutes />}>
-          <Route path="/" element={<MainLayout />}>
-            <Route index element={<Home />} />
-            <Route path="about" element={<About />} />
+          <Route element={<MainLayout />}>
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="accounts" element={<Accounts />} />
             <Route path="categories" element={<Categories />} />
@@ -86,9 +72,8 @@ function App() {
           </Route>
         </Route>
       </Routes>
-
     </>
   )
 }
 
-export default App
+export default App;

@@ -58,17 +58,14 @@ const Sidebar = ({ isOpen, onClose }) => {
                 {/* Branding & Close Button */}
                 <div className="mb-10 w-full">
                     <div className="flex items-center justify-between mb-2">
-                        <h1 className="text-2xl font-black tracking-tight flex items-center justify-center lg:justify-start gap-2">
-                            <span className="text-3xl">💰</span>
-                            <Link to="/" className="hidden lg:flex items-center gap-2">
-                                <span className="bg-gradient-to-r from-indigo-600 to-violet-600 dark:from-indigo-400 dark:to-violet-400 bg-clip-text text-transparent">
-                                    MyMoney
-                                </span>
-                                <span className="px-1.5 py-0.5 rounded text-[8px] font-black bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">
-                                    BETA
-                                </span>
-                            </Link>
-                        </h1>
+                        <Link to="/" className="flex items-center gap-2">
+                            <span className="text-2xl font-black bg-gradient-to-r from-indigo-600 to-violet-600 dark:from-indigo-400 dark:to-violet-400 bg-clip-text text-transparent">
+                                MyMoney
+                            </span>
+                            <span className="px-1.5 py-0.5 rounded text-[8px] font-black bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">
+                                BETA
+                            </span>
+                        </Link>
 
                         {/* Mobile Close Button */}
                         <button

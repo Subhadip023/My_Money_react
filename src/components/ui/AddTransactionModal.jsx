@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 import { setLoading } from '../../redux/uiSlice'
 import toast from 'react-hot-toast'
 import Modal from './Modal'
@@ -70,155 +71,197 @@ const AddTransactionModal = ({ isOpen, onClose, onTransactionAdded }) => {
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} title="Add New Transaction">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-                {/* Transaction Type Toggle */}
-                <div className="flex bg-neutral-100 dark:bg-neutral-800 p-1 rounded-2xl dark:text-white">
-                    <button
-                        type="button"
-                        onClick={() => reset({ ...watch(), type: 'expense' })}
-                        className={cn(
-                            "flex-1 py-3 rounded-xl font-bold transition-all",
-                            transactionType === 'expense'
-                                ? "bg-white dark:bg-neutral-700 text-rose-600 shadow-sm"
-                                : "text-neutral-500"
-                        )}
-                    >
-                        Expense
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => reset({ ...watch(), type: 'income' })}
-                        className={cn(
-                            "flex-1 py-3 rounded-xl font-bold transition-all",
-                            transactionType === 'income'
-                                ? "bg-white dark:bg-neutral-700 text-emerald-600 shadow-sm"
-                                : "text-neutral-500"
-                        )}
-                    >
-                        Income
-                    </button>
-                    <input type="hidden" {...register("type")} />
-                </div>
-
-                <div>
-                    <label className="block text-sm font-bold mb-2 ml-1 text-neutral-700 dark:text-neutral-300">
-                        Description / Label
-                    </label>
-                    <input
-                        {...register("label", { required: "Description is required" })}
-                        className={cn(
-                            "w-full px-5 py-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800 border-2 transition-all outline-none dark:text-white",
-                            errors.label
-                                ? "border-rose-500/50 focus:border-rose-500"
-                                : "border-neutral-100 dark:border-neutral-700 focus:border-indigo-500"
-                        )}
-                        placeholder="e.g., Grocery shopping"
-                    />
-                    {errors.label && (
-                        <p className="mt-2 ml-1 text-xs font-bold text-rose-500 uppercase tracking-wider">
-                            {errors.label.message}
+            {/* Empty State / Form Toggle */}
+            {(accounts.length === 0 || categories.length === 0) ? (
+                <div className="py-10 flex flex-col items-center text-center space-y-6 animate-in fade-in duration-500">
+                    <div className="w-20 h-20 rounded-3xl bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center text-4xl shadow-inner">
+                        ⚠️
+                    </div>
+                    <div className="space-y-2">
+                        <h3 className="text-xl font-black text-neutral-900 dark:text-white">Missing Setup</h3>
+                        <p className="text-neutral-500 dark:text-neutral-400 font-medium max-w-[280px]">
+                            You need at least one **Account** and one **Category** to record a transaction.
                         </p>
-                    )}
-                </div>
+                    </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label className="block text-sm font-bold mb-2 ml-1 text-neutral-700 dark:text-neutral-300">
-                            Amount
-                        </label>
-                        <div className="relative">
-                            <span className="absolute left-5 top-1/2 -translate-y-1/2 text-neutral-400 font-bold">₹</span>
-                            <input
-                                type="number"
-                                step="0.01"
-                                {...register("amount", { required: "Amount is required", min: { value: 0.01, message: "Amount must be positive" } })}
-                                className={cn(
-                                    "w-full px-10 py-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800 border-2 transition-all outline-none dark:text-white",
-                                    errors.amount
-                                        ? "border-rose-500/50 focus:border-rose-500"
-                                        : "border-neutral-100 dark:border-neutral-700 focus:border-indigo-500"
-                                )}
-                                placeholder="0.00"
-                            />
-                        </div>
-                        {errors.amount && (
-                            <p className="mt-2 ml-1 text-xs font-bold text-rose-500 uppercase tracking-wider">
-                                {errors.amount.message}
-                            </p>
+                    <div className="flex flex-col w-full gap-3 pt-4">
+                        {accounts.length === 0 && (
+                            <Link
+                                to="/accounts"
+                                onClick={onClose}
+                                className="w-full py-4 rounded-2xl bg-indigo-600 text-white font-black text-center shadow-lg shadow-indigo-600/20 active:scale-95 transition-all"
+                            >
+                                Add Account First
+                            </Link>
                         )}
+                        {categories.length === 0 && (
+                            <Link
+                                to="/categories"
+                                onClick={onClose}
+                                className="w-full py-4 rounded-2xl bg-violet-600 text-white font-black text-center shadow-lg shadow-violet-600/20 active:scale-95 transition-all"
+                            >
+                                Create Category First
+                            </Link>
+                        )}
+                        <button
+                            onClick={onClose}
+                            className="w-full py-4 rounded-2xl bg-neutral-100 dark:bg-neutral-800 text-neutral-500 font-bold hover:bg-neutral-200 transition-all"
+                        >
+                            Not Now
+                        </button>
+                    </div>
+                </div>
+            ) : (
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+                    {/* Transaction Type Toggle */}
+                    <div className="flex bg-neutral-100 dark:bg-neutral-800 p-1 rounded-2xl dark:text-white">
+                        <button
+                            type="button"
+                            onClick={() => reset({ ...watch(), type: 'expense' })}
+                            className={cn(
+                                "flex-1 py-3 rounded-xl font-bold transition-all",
+                                transactionType === 'expense'
+                                    ? "bg-white dark:bg-neutral-700 text-rose-600 shadow-sm"
+                                    : "text-neutral-500"
+                            )}
+                        >
+                            Expense
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => reset({ ...watch(), type: 'income' })}
+                            className={cn(
+                                "flex-1 py-3 rounded-xl font-bold transition-all",
+                                transactionType === 'income'
+                                    ? "bg-white dark:bg-neutral-700 text-emerald-600 shadow-sm"
+                                    : "text-neutral-500"
+                            )}
+                        >
+                            Income
+                        </button>
+                        <input type="hidden" {...register("type")} />
                     </div>
 
                     <div>
                         <label className="block text-sm font-bold mb-2 ml-1 text-neutral-700 dark:text-neutral-300">
-                            Account
+                            Description / Label
+                        </label>
+                        <input
+                            {...register("label", { required: "Description is required" })}
+                            className={cn(
+                                "w-full px-5 py-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800 border-2 transition-all outline-none dark:text-white",
+                                errors.label
+                                    ? "border-rose-500/50 focus:border-rose-500"
+                                    : "border-neutral-100 dark:border-neutral-700 focus:border-indigo-500"
+                            )}
+                            placeholder="e.g., Grocery shopping"
+                        />
+                        {errors.label && (
+                            <p className="mt-2 ml-1 text-xs font-bold text-rose-500 uppercase tracking-wider">
+                                {errors.label.message}
+                            </p>
+                        )}
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-bold mb-2 ml-1 text-neutral-700 dark:text-neutral-300">
+                                Amount
+                            </label>
+                            <div className="relative">
+                                <span className="absolute left-5 top-1/2 -translate-y-1/2 text-neutral-400 font-bold">₹</span>
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    {...register("amount", { required: "Amount is required", min: { value: 0.01, message: "Amount must be positive" } })}
+                                    className={cn(
+                                        "w-full px-10 py-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800 border-2 transition-all outline-none dark:text-white",
+                                        errors.amount
+                                            ? "border-rose-500/50 focus:border-rose-500"
+                                            : "border-neutral-100 dark:border-neutral-700 focus:border-indigo-500"
+                                    )}
+                                    placeholder="0.00"
+                                />
+                            </div>
+                            {errors.amount && (
+                                <p className="mt-2 ml-1 text-xs font-bold text-rose-500 uppercase tracking-wider">
+                                    {errors.amount.message}
+                                </p>
+                            )}
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-bold mb-2 ml-1 text-neutral-700 dark:text-neutral-300">
+                                Account
+                            </label>
+                            <select
+                                {...register("accountId", { required: "Account is required" })}
+                                className={cn(
+                                    "w-full px-5 py-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800 border-2 transition-all outline-none appearance-none dark:text-white",
+                                    errors.accountId
+                                        ? "border-rose-500/50 focus:border-rose-500"
+                                        : "border-neutral-100 dark:border-neutral-700 focus:border-indigo-500"
+                                )}
+                            >
+                                <option value="">Select Account</option>
+                                {accounts.map(acc => (
+                                    <option key={acc.$id} value={acc.$id}>{acc.accountName}</option>
+                                ))}
+                            </select>
+                            {errors.accountId && (
+                                <p className="mt-2 ml-1 text-xs font-bold text-rose-500 uppercase tracking-wider">
+                                    {errors.accountId.message}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-bold mb-2 ml-1 text-neutral-700 dark:text-neutral-300">
+                            Category
                         </label>
                         <select
-                            {...register("accountId", { required: "Account is required" })}
+                            {...register("categoryId", { required: "Category is required" })}
                             className={cn(
                                 "w-full px-5 py-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800 border-2 transition-all outline-none appearance-none dark:text-white",
-                                errors.accountId
+                                errors.categoryId
                                     ? "border-rose-500/50 focus:border-rose-500"
                                     : "border-neutral-100 dark:border-neutral-700 focus:border-indigo-500"
                             )}
                         >
-                            <option value="">Select Account</option>
-                            {accounts.map(acc => (
-                                <option key={acc.$id} value={acc.$id}>{acc.accountName}</option>
+                            <option value="">Select Category</option>
+                            {categories.map(cat => (
+                                <option key={cat.$id} value={cat.$id}>{cat.name} ({cat.type})</option>
                             ))}
                         </select>
-                        {errors.accountId && (
+                        {errors.categoryId && (
                             <p className="mt-2 ml-1 text-xs font-bold text-rose-500 uppercase tracking-wider">
-                                {errors.accountId.message}
+                                {errors.categoryId.message}
                             </p>
                         )}
                     </div>
-                </div>
 
-                <div>
-                    <label className="block text-sm font-bold mb-2 ml-1 text-neutral-700 dark:text-neutral-300">
-                        Category
-                    </label>
-                    <select
-                        {...register("categoryId", { required: "Category is required" })}
-                        className={cn(
-                            "w-full px-5 py-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800 border-2 transition-all outline-none appearance-none dark:text-white",
-                            errors.categoryId
-                                ? "border-rose-500/50 focus:border-rose-500"
-                                : "border-neutral-100 dark:border-neutral-700 focus:border-indigo-500"
-                        )}
-                    >
-                        <option value="">Select Category</option>
-                        {categories.map(cat => (
-                            <option key={cat.$id} value={cat.$id}>{cat.name} ({cat.type})</option>
-                        ))}
-                    </select>
-                    {errors.categoryId && (
-                        <p className="mt-2 ml-1 text-xs font-bold text-rose-500 uppercase tracking-wider">
-                            {errors.categoryId.message}
-                        </p>
-                    )}
-                </div>
-
-                <div className="pt-4 flex gap-4">
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        className="flex-1 py-4 rounded-2xl bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 font-bold transition-all hover:bg-neutral-200"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className={cn(
-                            "flex-1 py-4 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-lg transition-all active:scale-[0.98] shadow-xl shadow-indigo-600/20",
-                            loading && "opacity-50 cursor-not-allowed"
-                        )}
-                    >
-                        {loading ? 'Adding...' : 'Add Transaction'}
-                    </button>
-                </div>
-            </form>
+                    <div className="pt-4 flex gap-4">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="flex-1 py-4 rounded-2xl bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 font-bold transition-all hover:bg-neutral-200"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className={cn(
+                                "flex-1 py-4 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-lg transition-all active:scale-[0.98] shadow-xl shadow-indigo-600/20",
+                                loading && "opacity-50 cursor-not-allowed"
+                            )}
+                        >
+                            {loading ? 'Adding...' : 'Add Transaction'}
+                        </button>
+                    </div>
+                </form>
+            )}
         </Modal>
     )
 }

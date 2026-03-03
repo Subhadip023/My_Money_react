@@ -41,7 +41,7 @@ const AddAccountModal = ({ isOpen, onClose, onAccountAdded }) => {
                     <input
                         {...register("name", { required: "Name is required" })}
                         className={cn(
-                            "w-full px-5 py-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800 border-2 transition-all outline-none",
+                            "w-full px-5 py-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800 border-2 transition-all outline-none dark:text-white",
                             errors.name
                                 ? "border-rose-500/50 focus:border-rose-500"
                                 : "border-neutral-100 dark:border-neutral-700 focus:border-indigo-500"
@@ -62,7 +62,7 @@ const AddAccountModal = ({ isOpen, onClose, onAccountAdded }) => {
                     <select
                         {...register("type", { required: "Type is required" })}
                         className={cn(
-                            "w-full px-5 py-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800 border-2 transition-all outline-none",
+                            "w-full px-5 py-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800 border-2 transition-all outline-none dark:text-white",
                             errors.type
                                 ? "border-rose-500/50 focus:border-rose-500"
                                 : "border-neutral-100 dark:border-neutral-700 focus:border-indigo-500"
@@ -90,7 +90,7 @@ const AddAccountModal = ({ isOpen, onClose, onAccountAdded }) => {
                             step="0.01"
                             {...register("balance", { required: "Initial balance is required" })}
                             className={cn(
-                                "w-full px-10 py-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800 border-2 transition-all outline-none",
+                                "w-full px-10 py-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800 border-2 transition-all outline-none dark:text-white",
                                 errors.balance
                                     ? "border-rose-500/50 focus:border-rose-500"
                                     : "border-neutral-100 dark:border-neutral-700 focus:border-indigo-500"
