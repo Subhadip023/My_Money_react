@@ -54,6 +54,14 @@ export class AuthService {
             throw error;
         }
     }
+
+    async updatePrefs(prefs) {
+        try {
+            return await this.account.updatePrefs(prefs);
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 const authService = new AuthService();

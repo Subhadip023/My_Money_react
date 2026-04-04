@@ -93,7 +93,7 @@ const TransferModal = ({ isOpen, onClose, onTransferComplete }) => {
                         {...register("fromAccount", { required: "Source account is required" })}
                         className={cn(
                             "w-full px-5 py-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800 border-2 transition-all outline-none appearance-none",
-                            errors.fromAccount ? "border-rose-500" : "border-neutral-100 dark:border-neutral-700 focus:border-indigo-500"
+                            errors.fromAccount ? "border-rose-500" : "border-neutral-100 dark:text-white dark:border-neutral-700 focus:border-indigo-500"
                         )}
                     >
                         <option value="">Select Source Account</option>
@@ -118,7 +118,7 @@ const TransferModal = ({ isOpen, onClose, onTransferComplete }) => {
                     <select
                         {...register("toAccount", { required: "Destination account is required" })}
                         className={cn(
-                            "w-full px-5 py-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800 border-2 transition-all outline-none appearance-none",
+                            "w-full px-5 py-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800 dark:text-white border-2 transition-all outline-none appearance-none",
                             errors.toAccount ? "border-rose-500" : "border-neutral-100 dark:border-neutral-700 focus:border-indigo-500"
                         )}
                     >
@@ -140,7 +140,7 @@ const TransferModal = ({ isOpen, onClose, onTransferComplete }) => {
                             step="0.01"
                             {...register("amount", { required: "Amount is required", min: { value: 1, message: "Min amount is ₹1" } })}
                             className={cn(
-                                "w-full px-10 py-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800 border-2 transition-all outline-none",
+                                "w-full px-10 py-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800 dark:text-white border-2 transition-all outline-none",
                                 errors.amount ? "border-rose-500" : "border-neutral-100 dark:border-neutral-700 focus:border-indigo-500"
                             )}
                             placeholder="0.00"

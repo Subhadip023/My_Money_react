@@ -4,11 +4,14 @@ import { setLoading } from '../redux/uiSlice'
 import accountService from '../appwrite/account'
 import AddTransactionModal from '../components/ui/AddTransactionModal'
 import transactionService from '../appwrite/transaction'
+import PieChart from '../components/PieChart'
 import FloatingCard from '../components/ui/FlotingCard'
 export default function Dashboard() {
     const [totalBalance, setTotalBalance] = useState(0)
     const [monthlyExpences, setMonthlyExpences] = useState(0)
     const [monthlyIncome, setMonthlyIncome] = useState(0)
+    const [recentTransactions, setRecentTransactions] = useState([])
+    const [accounts, setAccounts] = useState([])
     const [isModalOpen, setIsModalOpen] = useState(false)
     const dispatch = useDispatch()
     const user = useSelector((state) => state.auth.user)
@@ -40,18 +43,48 @@ export default function Dashboard() {
             console.error("Failed to calculate balance:", error)
         }
     }
+    const fetchRecentTransactions = async () => {
+        if (!user) return;
+        try {
+            const res = await transactionService.getTransactions({ userId: user.$id });
+            if (res && res.documents) {
+                setRecentTransactions(res.documents.slice(0, 5));
+            }
+        } catch (error) {
+            console.error("Failed to fetch recent transactions:", error);
+        }
+    };
+    const fetchAccounts = async () => {
+        if (!user) return;
+        try {
+            const res = await accountService.getAccounts({ userId: user.$id });
+            if (res && res.documents) {
+                setAccounts(res.documents);
+            }
+        } catch (error) {
+            console.error("Failed to fetch accounts:", error);
+        }
+    };
 
     useEffect(() => {
         calculateTotalBalance()
         calculateMonthlyExpences()
         calculateMonthlyIncome()
+        fetchRecentTransactions()
+        fetchAccounts()
     }, [user])
 
     const handleTransactionAdded = () => {
         calculateTotalBalance()
         calculateMonthlyExpences()
         calculateMonthlyIncome()
+        fetchRecentTransactions()
+        fetchAccounts()
     }
+
+    const pieChartData = accounts
+        .filter(acc => acc.balance > 0)
+        .map(acc => ({ name: acc.accountName, y: acc.balance }));
 
     return (
         <div className="space-y-8">
@@ -84,6 +117,42 @@ export default function Dashboard() {
                         <div className="text-3xl font-black">{stat.value}</div>
                     </FloatingCard>
                 ))}
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                    <FloatingCard className="p-8 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 shadow-sm overflow-hidden relative group">
+                        {/* Chat that show the money in account */}
+                        <PieChart data={pieChartData} title="Account Balances" showTotal={false} />
+                    </FloatingCard>
+                    <FloatingCard className="p-8 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 shadow-sm overflow-hidden relative group">
+                        <div className="flex items-center justify-between mb-6">
+                            <h3 className="text-xl font-black">Recent Transactions</h3>
+                        </div>
+                        <div className="space-y-4">
+                            {recentTransactions.map((tx) => (
+                                <div key={tx.$id} className="flex items-center justify-between p-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-700 transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800">
+                                    <div className="flex items-center gap-4">
+                                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl shadow-sm ${tx.type === 'income' ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400' : 'bg-rose-100 text-rose-600 dark:bg-rose-500/20 dark:text-rose-400'}`}>
+                                            {tx.type === 'income' ? '↓' : '↑'}
+                                        </div>
+                                        <div>
+                                            <p className="font-bold truncate max-w-[150px] sm:max-w-[200px]">{tx.label}</p>
+                                            <p className="text-sm text-neutral-500 dark:text-neutral-400">{new Date(tx.$createdAt).toLocaleDateString('en-GB')}</p>
+                                        </div>
+                                    </div>
+                                    <div className={`font-black ${tx.type === 'income' ? 'text-emerald-500' : 'text-rose-500'}`}>
+                                        {tx.type === 'income' ? '+' : '-'}₹{tx.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                                    </div>
+                                </div>
+                            ))}
+                            {recentTransactions.length === 0 && (
+                                <div className="text-center text-neutral-500 dark:text-neutral-400 py-8 font-medium">
+                                    No recent transactions
+                                </div>
+                            )}
+                        </div>
+                    </FloatingCard>
+                
             </div>
 
             <AddTransactionModal

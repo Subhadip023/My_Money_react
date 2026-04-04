@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import AddAccountModal from '../components/ui/AddAccountModal'
 import EditAccountModal from '../components/ui/EditAccountModal'
 import TransferModal from '../components/ui/TransferModal'
+import AddAmountModal from '../components/ui/AddAmountModal'
 import { accountService } from '../services'
 import toast from 'react-hot-toast'
 import { useSelector } from 'react-redux'
@@ -11,6 +12,7 @@ export default function Accounts() {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [isTransferModalOpen, setIsTransferModalOpen] = useState(false)
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+    const [isAddAmountModalOpen, setIsAddAmountModalOpen] = useState(false)
     const [selectedAccount, setSelectedAccount] = useState(null)
     const [accounts, setAccounts] = useState([])
     const user = useSelector((state) => state.auth.user)
@@ -42,6 +44,11 @@ export default function Accounts() {
     const handleEditAccount = (account) => {
         setSelectedAccount(account)
         setIsEditModalOpen(true)
+    }
+
+    const handleAddAmount = (account) => {
+        setSelectedAccount(account)
+        setIsAddAmountModalOpen(true)
     }
 
     const handleUpdateAccount = (updatedAccount) => {
@@ -132,6 +139,7 @@ export default function Accounts() {
                                 </td>
                                 <td className='px-8 py-6 text-right'>
                                     <div className="flex justify-end gap-2">
+                                        <Button variant="ghost" size="sm" onClick={() => handleAddAmount(account)}>Add Funds</Button>
                                         <Button variant="ghost" size="sm" onClick={() => handleEditAccount(account)}>Edit</Button>
                                         <Button variant="danger" size="sm" onClick={() => handleDeleteAccount(account.$id)}>Delete</Button>
                                     </div>
@@ -144,6 +152,7 @@ export default function Accounts() {
 
             <AddAccountModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onAccountAdded={handleAddAccount} />
             <EditAccountModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} account={selectedAccount} onAccountUpdated={handleUpdateAccount} />
+            <AddAmountModal isOpen={isAddAmountModalOpen} onClose={() => setIsAddAmountModalOpen(false)} account={selectedAccount} onAmountAdded={fetchAccounts} />
             <TransferModal isOpen={isTransferModalOpen} onClose={() => setIsTransferModalOpen(false)} onTransferComplete={fetchAccounts} />
         </div>
     )

@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard'
 import Accounts from './pages/Accounts'
 import Categories from './pages/Categories'
 import Transactions from './pages/Transactions'
+import Settings from './pages/Settings'
 import GuestLayout from './layouts/GuestLayout'
 import Login from './pages/Login'
 import Register from './pages/Register'
@@ -69,6 +70,7 @@ function App() {
             <Route path="accounts" element={<Accounts />} />
             <Route path="categories" element={<Categories />} />
             <Route path="transactions" element={<Transactions />} />
+            <Route path="settings" element={<Settings />} />
           </Route>
         </Route>
       </Routes>
