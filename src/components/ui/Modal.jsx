@@ -26,11 +26,11 @@ const Modal = ({ isOpen, onClose, title, children }) => {
 
             {/* Modal Content */}
             <div className={cn(
-                "relative w-full max-w-lg bg-white dark:bg-neutral-800 rounded-3xl shadow-2xl overflow-hidden",
+                "relative w-full max-w-lg max-h-full flex flex-col bg-white dark:bg-neutral-800 rounded-3xl shadow-2xl overflow-hidden",
                 "border border-neutral-100 dark:border-neutral-700 transition-all transform scale-100 animate-in fade-in zoom-in duration-200"
             )}>
                 {/* Header */}
-                <div className="flex items-center justify-between p-6 border-b border-neutral-100 dark:border-neutral-700">
+                <div className="flex items-center justify-between p-4 sm:p-6 border-b border-neutral-100 dark:border-neutral-700 flex-shrink-0">
                     <h3 className="text-xl font-black tracking-tight text-neutral-900 dark:text-white">
                         {title}
                     </h3>
@@ -45,7 +45,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
                 </div>
 
                 {/* Body */}
-                <div className="p-8">
+                <div className="p-4 sm:p-6 md:p-8 overflow-y-auto">
                     {children}
                 </div>
             </div>

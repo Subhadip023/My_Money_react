@@ -77,7 +77,7 @@ export default function Transactions() {
             </div>
 
             {/* Premium Transaction List */}
-            <div className="overflow-hidden rounded-3xl border border-neutral-100 dark:border-neutral-700/50 bg-white/50 dark:bg-neutral-800/30 backdrop-blur-sm shadow-sm">
+            <div className="overflow-x-auto overflow-y-hidden rounded-3xl border border-neutral-100 dark:border-neutral-700/50 bg-white/50 dark:bg-neutral-800/30 backdrop-blur-sm shadow-sm">
                 <table className='w-full text-left border-collapse'>
                     <thead>
                         <tr className='bg-neutral-50/50 dark:bg-neutral-800/50'>

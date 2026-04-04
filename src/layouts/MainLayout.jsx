@@ -10,11 +10,21 @@ import UserTour from '../components/ui/UserTour'
 export const MainLayout = () => {
     const dispatch = useDispatch()
     const user = useSelector((state) => state.auth.user)
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true)
+    const [isSidebarOpen, setIsSidebarOpen] = useState(() => window.innerWidth >= 768)
     const darkMode = useSelector((state) => state.theme.darkMode)
 
     useEffect(() => {
         dispatch(initializeTheme())
+        
+        const handleResize = () => {
+            if (window.innerWidth < 768) {
+                setIsSidebarOpen(false)
+            } else {
+                setIsSidebarOpen(true)
+            }
+        }
+        window.addEventListener('resize', handleResize)
+        return () => window.removeEventListener('resize', handleResize)
     }, [dispatch])
 
     return (
