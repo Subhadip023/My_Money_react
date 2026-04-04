@@ -9,12 +9,14 @@ const GuestNavbar = () => {
     const darkMode = useSelector((state) => state.theme.darkMode)
     const dispatch = useDispatch()
     const [isMenuOpen, setIsMenuOpen] = useState(false)
-
+    const isAuthenticated = useSelector((state) => state.auth.isAuthenticated)
+    console.log("isAuthenticated", isAuthenticated);
     const navItems = [
-        { name: 'Home', path: '/' },
-        { name: 'About', path: '/about' },
-        { name: 'Login', path: '/login' },
-        { name: 'Register', path: '/register' },
+        { name: 'Home', path: '/' , show: true },
+        { name: 'About', path: '/about'  ,show: true},
+        { name: 'Login', path: '/login'  ,show: !isAuthenticated},
+        { name: 'Register', path: '/register'  ,show: !isAuthenticated},
+        { name: 'Dashboard', path: '/dashboard' ,show: isAuthenticated},
     ]
 
     return (
@@ -37,7 +39,7 @@ const GuestNavbar = () => {
                     {/* Desktop Navigation */}
                     <div className="hidden md:flex items-center gap-8">
                         <div className="flex gap-6">
-                            {navItems.map((item) => (
+                            {navItems.map((item) => item.show && (
                                 <Link
                                     key={item.path}
                                     to={item.path}

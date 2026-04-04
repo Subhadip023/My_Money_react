@@ -11,7 +11,7 @@ class TransactionService {
         try {
             if (!skipBalanceUpdate) {
                 await accountService.updateAccountBalance({ userId, accountId, amount, type })
-            }
+            } 
             return await this.databases.createDocument(
                 conf.appwriteDataBaseId,
                 conf.appwriteCollectionIDTransaction,

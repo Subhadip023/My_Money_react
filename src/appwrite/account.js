@@ -76,7 +76,7 @@ class AccountService {
             }
             const currentBalance = Number(account.balance)
             const changeAmount = Number(amount)
-            const newBalance = type === 'income' ? currentBalance + changeAmount : currentBalance - changeAmount
+            const newBalance = type === 'income' ? currentBalance + changeAmount : (account.accountType === 'asset' ? currentBalance - changeAmount : currentBalance + changeAmount)
 
             return await this.updateAccount(accountId, {
                 accountName: account.accountName,
@@ -101,8 +101,8 @@ class AccountService {
             }
 
             const transferAmt = Number(amount)
-            const fromBalance = Number(fromAccount.balance) - transferAmt
-            const toBalance = Number(toAccount.balance) + transferAmt
+            const fromBalance = fromAccount.accountType === 'asset' ? Number(fromAccount.balance) - transferAmt : Number(fromAccount.balance) + transferAmt
+            const toBalance = toAccount.accountType === 'asset' ? Number(toAccount.balance) + transferAmt : Number(toAccount.balance) - transferAmt
 
             await Promise.all([
                 this.updateAccount(fromAccountId, { ...fromAccount, balance: Number(fromBalance.toFixed(2)) }),

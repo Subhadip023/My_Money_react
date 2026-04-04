@@ -84,7 +84,7 @@ export const MainLayout = () => {
                 </header>
 
                 <main className="flex-1 p-4 md:p-10">
-                    <div className="bg-neutral-50 dark:bg-neutral-800/50 p-6 md:p-12 rounded-[24px] md:rounded-[40px] border border-neutral-100 dark:border-neutral-700/50 backdrop-blur-sm transition-colors shadow-sm min-h-[calc(100vh-120px)] md:min-h-[calc(100vh-140px)]">
+                    <div className="bg-neutral-50 dark:bg-neutral-800/50 p-6 md:p-12 rounded-[24px] md:rounded-[40px] border border-neutral-100 dark:border-neutral-700/50 backdrop-blur-sm transition-colors shadow-sm min-h-[calc(100vh-120px)] md:min-h-[calc(100vh-240px)]">
                         <Outlet />
                     </div>
                 </main>
