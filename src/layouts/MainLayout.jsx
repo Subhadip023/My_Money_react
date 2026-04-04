@@ -6,13 +6,13 @@ import Sidebar from '../components/Sidebar'
 import { cn } from '../utils'
 import Footer from '../components/Footer'
 import UserTour from '../components/ui/UserTour'
+import conf from '../config/config'
 
 export const MainLayout = () => {
     const dispatch = useDispatch()
     const user = useSelector((state) => state.auth.user)
     const [isSidebarOpen, setIsSidebarOpen] = useState(() => window.innerWidth >= 768)
     const darkMode = useSelector((state) => state.theme.darkMode)
-
     useEffect(() => {
         dispatch(initializeTheme())
         
@@ -85,8 +85,8 @@ export const MainLayout = () => {
                                 </p>
                             </div>
                             <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-500 to-violet-500 p-[2px] shadow-lg shadow-indigo-500/20">
-                                {user?.prefs?.avatar ? (
-                                    <img src={user.prefs.avatar} alt="Profile" className="w-full h-full rounded-[14px] object-cover" />
+                                {user?.prefs?.avatarId ? (
+                                    <img src={`https://fra.cloud.appwrite.io/v1/storage/buckets/${conf.appwriteBucketID}/files/${user.prefs.avatarId}/view?project=${conf.appwriteProjectId}`} alt="Profile" className="w-full h-full rounded-[14px] object-cover" />
                                 ) : (
                                     <div className="w-full h-full rounded-[14px] bg-white dark:bg-neutral-800 flex items-center justify-center font-black text-indigo-600 dark:text-indigo-400">
                                         {user?.name?.charAt(0).toUpperCase() || 'U'}

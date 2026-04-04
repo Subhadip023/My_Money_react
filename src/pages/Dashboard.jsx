@@ -122,7 +122,7 @@ export default function Dashboard() {
                 
                     <FloatingCard className="p-6 md:p-8 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 shadow-sm overflow-hidden relative group">
                         {/* Chat that show the money in account */}
-                        <PieChart data={pieChartData} title="Account Balances" showTotal={false} />
+                        <PieChart data={pieChartData} title="Account Balances" showTotal={true} />
                     </FloatingCard>
                     <FloatingCard className="p-6 md:p-8 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 shadow-sm overflow-hidden relative group">
                         <div className="flex items-center justify-between mb-6">

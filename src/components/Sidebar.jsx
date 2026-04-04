@@ -102,7 +102,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                                 )}
                             >
                                 <span className="text-xl flex-shrink-0">{item.icon}</span>
-                                <span className="hidden lg:inline whitespace-nowrap">{item.name}</span>
+                                <span className="lg:inline whitespace-nowrap">{item.name}</span>
                                 {isActive && (
                                     <div className="absolute left-0 lg:left-0 top-0 bottom-0 w-1 bg-white/30 rounded-full my-auto h-1/2" />
                                 )}
