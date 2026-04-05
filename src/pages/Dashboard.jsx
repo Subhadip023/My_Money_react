@@ -148,11 +148,11 @@ export default function Dashboard() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 
-                    <FloatingCard className="p-6 md:p-8 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 shadow-sm overflow-hidden relative group">
+                    <FloatingCard className="p-6 md:p-8 hidden md:block rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 shadow-sm overflow-hidden relative group">
                         {/* Chat that show the money in account */}
                         <PieChart data={pieChartData} title="Account Balances" showTotal={true} />
                     </FloatingCard>
-                    <FloatingCard className="p-6 md:p-8 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 shadow-sm overflow-hidden relative group">
+                    <FloatingCard className="p-6 md:p-8 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 shadow-sm  relative group">
                         <div className="flex items-center justify-between mb-6">
                             <h3 className="text-xl font-black">Recent Transactions</h3>
                         </div>

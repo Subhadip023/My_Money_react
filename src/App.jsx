@@ -12,7 +12,7 @@ import Investments from './pages/Investments'
 import GuestLayout from './layouts/GuestLayout'
 import Login from './pages/Login'
 import Register from './pages/Register'
-import { useDispatch } from 'react-redux'
+import { useDispatch ,useSelector} from 'react-redux'
 import { useEffect } from 'react'
 import authService from './appwrite/auth'
 import { setUser, logout } from './redux/authSlice'
@@ -44,15 +44,19 @@ function App() {
       })
   }, [dispatch])
 
+
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated)
+
   return (
     <>
       <Toaster position="top-right" reverseOrder={false} />
       <Loader />
+      {/* Is user Authnticated load dashboard not home page  */}
       <Routes>
         {/* Everything inside GuestLayout by default */}
-        <Route element={<GuestLayout />}>
+        <Route element={isAuthenticated ? <MainLayout /> : <GuestLayout />}>
           {/* Publicly Shared Pages */}
-          <Route index element={<Home />} />
+          <Route index element={isAuthenticated ? <Dashboard /> : <Home />} />
           <Route path="about" element={<About />} />
 
           {/* Authenticated Guests Only (Login/Register) */}
