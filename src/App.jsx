@@ -4,6 +4,7 @@ import { Home } from './pages/Home'
 import { About } from './pages/About'
 import Dashboard from './pages/Dashboard'
 import Accounts from './pages/Accounts'
+import AccountDetails from './pages/AccountDetails'
 import Categories from './pages/Categories'
 import Transactions from './pages/Transactions'
 import Settings from './pages/Settings'
@@ -68,6 +69,7 @@ function App() {
           <Route element={<MainLayout />}>
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="accounts" element={<Accounts />} />
+            <Route path="accounts/:id" element={<AccountDetails />} />
             <Route path="categories" element={<Categories />} />
             <Route path="transactions" element={<Transactions />} />
             <Route path="settings" element={<Settings />} />

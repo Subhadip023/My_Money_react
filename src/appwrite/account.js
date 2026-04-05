@@ -60,7 +60,6 @@ class AccountService {
     async getAccountBalance({ userId }) {
         try {
             const accounts = await this.getAccounts({ userId })
-            console.log(accounts)
             const totalBalance = accounts.documents.reduce((acc, account) => acc + (account.accountType === 'asset' ? account.balance : -account.balance), 0)
             return totalBalance
         } catch (error) {
