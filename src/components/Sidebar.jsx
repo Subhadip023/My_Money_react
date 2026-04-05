@@ -31,13 +31,13 @@ const Sidebar = ({ isOpen, onClose }) => {
     }
 
     const navItems = [
-        { name: 'Home', path: '/', icon: '🏠' },
+        // { name: 'Home', path: '/', icon: '🏠' },
         { name: 'Dashboard', path: '/dashboard', icon: '📊' },
         { name: 'Accounts', path: '/accounts', icon: '💳' },
         { name: 'Categories', path: '/categories', icon: '🏷️' },
         { name: 'Transactions', path: '/transactions', icon: '📝' },
         { name: 'Settings', path: '/settings', icon: '⚙️' },
-        { name: 'About', path: '/about', icon: 'ℹ️' },
+        // { name: 'About', path: '/about', icon: 'ℹ️' },
     ]
 
     return (
@@ -59,7 +59,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                 {/* Branding & Close Button */}
                 <div className="mb-10 w-full">
                     <div className="flex items-center justify-between mb-2">
-                        <Link to="/" className="flex items-center gap-2">
+                        <Link to="/dashboard" className="flex items-center gap-2">
                             <span className="text-2xl font-black bg-gradient-to-r from-indigo-600 to-violet-600 dark:from-indigo-400 dark:to-violet-400 bg-clip-text text-transparent">
                                 MyMoney
                             </span>

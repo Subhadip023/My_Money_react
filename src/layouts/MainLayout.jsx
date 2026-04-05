@@ -58,7 +58,7 @@ export const MainLayout = () => {
 
                     {/* Right: User Profile & Actions */}
                     <div className="flex items-center gap-3 sm:gap-6">
-                        {/* Theme Toggle */}
+                        {/* Theme Toggle 
                         <button
                             onClick={() => dispatch(toggleTheme())}
                             title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
@@ -73,7 +73,7 @@ export const MainLayout = () => {
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
                                 </svg>
                             )}
-                        </button>
+                        </button>*/}
 
                         <div className="flex items-center gap-4">
                             <div className="text-right hidden sm:block">
@@ -98,9 +98,8 @@ export const MainLayout = () => {
                 </header>
 
                 <main className="flex-1 p-4 md:p-10">
-                    <div className="bg-neutral-50 dark:bg-neutral-800/50 p-6 md:p-12 rounded-[24px] md:rounded-[40px] border border-neutral-100 dark:border-neutral-700/50 backdrop-blur-sm transition-colors shadow-sm min-h-[calc(100vh-120px)] md:min-h-[calc(100vh-240px)]">
+                    
                         <Outlet />
-                    </div>
                 </main>
                 <Footer />
             </div>

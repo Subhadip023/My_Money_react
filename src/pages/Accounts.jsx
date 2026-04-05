@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import AddAccountModal from '../components/ui/AddAccountModal'
 import EditAccountModal from '../components/ui/EditAccountModal'
 import TransferModal from '../components/ui/TransferModal'
@@ -9,6 +10,7 @@ import { useSelector } from 'react-redux'
 import Button from '../components/shared/Button'
 
 export default function Accounts() {
+    const navigate = useNavigate()
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [isTransferModalOpen, setIsTransferModalOpen] = useState(false)
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
@@ -139,6 +141,7 @@ export default function Accounts() {
                                 </td>
                                 <td className='px-8 py-6 text-right'>
                                     <div className="flex justify-end gap-2">
+                                        <Button variant="ghost" size="sm" onClick={() => navigate(`/accounts/${account.$id}`)}>Details</Button>
                                         <Button variant="ghost" size="sm" onClick={() => handleAddAmount(account)}>Add Funds</Button>
                                         <Button variant="ghost" size="sm" onClick={() => handleEditAccount(account)}>Edit</Button>
                                         <Button variant="danger" size="sm" onClick={() => handleDeleteAccount(account.$id)}>Delete</Button>
