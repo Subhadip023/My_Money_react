@@ -124,7 +124,7 @@ export default function Investments() {
                 <div className="space-y-2">
                     <h1 className='text-4xl font-black tracking-tight'>Investments</h1>
                     <p className='text-neutral-500 dark:text-neutral-400 font-medium'>
-                        Track your portfolio performance across mf, FD, and Stocks (Frontend Demo).
+                        Track your portfolio performance across mf, FD, and Stocks .
                     </p>
                 </div>
                 <div className='flex gap-3'>
