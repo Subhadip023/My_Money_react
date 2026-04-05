@@ -6,7 +6,8 @@ const conf = {
     appwriteCollectionIDCategory: String(import.meta.env.VITE_APPWRITE_COLLECTION_ID_CATEGORY),
     appwriteCollectionIDTransaction: String(import.meta.env.VITE_APPWRITE_COLLECTION_ID_TRANSACTION),
     appwriteCollectionIDUser: String(import.meta.env.VITE_APPWRITE_COLLECTION_ID_USER),
-    appwriteBucketID: String(import.meta.env.VITE_APPWRITE_BUCKET_ID)
+    appwriteBucketID: String(import.meta.env.VITE_APPWRITE_BUCKET_ID),
+    appwriteCollectionIDInvestment: String(import.meta.env.VITE_APPWRITE_COLLECTION_ID_INVESTMENT)
 }
 
 

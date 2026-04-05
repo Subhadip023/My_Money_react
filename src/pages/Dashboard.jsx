@@ -4,6 +4,7 @@ import { setLoading } from '../redux/uiSlice'
 import accountService from '../appwrite/account'
 import AddTransactionModal from '../components/ui/AddTransactionModal'
 import transactionService from '../appwrite/transaction'
+import investmentService from '../appwrite/investment'
 import PieChart from '../components/PieChart'
 import FloatingCard from '../components/ui/FlotingCard'
 export default function Dashboard() {
@@ -12,6 +13,7 @@ export default function Dashboard() {
     const [monthlyIncome, setMonthlyIncome] = useState(0)
     const [recentTransactions, setRecentTransactions] = useState([])
     const [accounts, setAccounts] = useState([])
+    const [investmentStats, setInvestmentStats] = useState({ totalInvested: 0, currentValue: 0 })
     const [isModalOpen, setIsModalOpen] = useState(false)
     const dispatch = useDispatch()
     const user = useSelector((state) => state.auth.user)
@@ -65,6 +67,17 @@ export default function Dashboard() {
             console.error("Failed to fetch accounts:", error);
         }
     };
+    const fetchInvestmentStats = async () => {
+        if (!user) return;
+        try {
+            const res = await investmentService.getInvestments({ userId: user.$id });
+            const totalInvested = res.documents.reduce((sum, inv) => sum + Number(inv.investedAmount), 0);
+            const currentValue = res.documents.reduce((sum, inv) => sum + Number(inv.currentValue), 0);
+            setInvestmentStats({ totalInvested, currentValue });
+        } catch (error) {
+            console.error("Failed to fetch investment stats:", error);
+        }
+    };
 
     useEffect(() => {
         calculateTotalBalance()
@@ -72,6 +85,7 @@ export default function Dashboard() {
         calculateMonthlyIncome()
         fetchRecentTransactions()
         fetchAccounts()
+        fetchInvestmentStats()
     }, [user])
 
     const handleTransactionAdded = () => {
@@ -80,6 +94,7 @@ export default function Dashboard() {
         calculateMonthlyIncome()
         fetchRecentTransactions()
         fetchAccounts()
+        fetchInvestmentStats()
     }
 
     const pieChartData = accounts
@@ -107,7 +122,13 @@ export default function Dashboard() {
                     { id: 'tour-balance-card', label: 'Total Balance', value: `₹${totalBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, icon: '💰', color: 'bg-emerald-500' },
                     { label: 'Monthly Income', value: `₹${monthlyIncome.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, icon: '📈', color: 'bg-indigo-500' },
                     { label: 'Monthly Expenses', value: `₹${monthlyExpences.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, icon: '📉', color: 'bg-rose-500' },
-                    // { label: 'Investment', value: `₹${(monthlyExpences - monthlyIncome).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, icon: '🏦', color: 'bg-emerald-500' },
+                    { 
+                        label: 'Portfolio Value', 
+                        value: `₹${investmentStats.currentValue.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, 
+                        icon: '🏦', 
+                        color: 'bg-emerald-500', 
+                        returns: investmentStats.currentValue - investmentStats.totalInvested 
+                    },
                 ].map((stat, i) => (
                     <FloatingCard id={stat.id} key={i} className="p-6 md:p-8 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 shadow-sm overflow-hidden relative group">
                         <div className={`absolute top-0 right-0 w-24 h-24 ${stat.color} opacity-[0.03] rounded-bl-full transition-transform group-hover:scale-110`} />
@@ -116,6 +137,12 @@ export default function Dashboard() {
                             <span className="text-sm font-bold uppercase tracking-widest text-neutral-400">{stat.label}</span>
                         </div>
                         <div className="text-3xl font-black">{stat.value}</div>
+                        {stat.label === 'Portfolio Value' && (
+                            <div className={`text-sm font-bold mt-2 ${stat.returns >= 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
+                                {stat.returns >= 0 ? '↑' : '↓'} ₹{Math.abs(stat.returns).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                                <span className="ml-1 opacity-70">Returns</span>
+                            </div>
+                        )}
                     </FloatingCard>
                 ))}
             </div>

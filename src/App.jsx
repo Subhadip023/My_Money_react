@@ -8,6 +8,7 @@ import AccountDetails from './pages/AccountDetails'
 import Categories from './pages/Categories'
 import Transactions from './pages/Transactions'
 import Settings from './pages/Settings'
+import Investments from './pages/Investments'
 import GuestLayout from './layouts/GuestLayout'
 import Login from './pages/Login'
 import Register from './pages/Register'
@@ -72,6 +73,7 @@ function App() {
             <Route path="accounts/:id" element={<AccountDetails />} />
             <Route path="categories" element={<Categories />} />
             <Route path="transactions" element={<Transactions />} />
+            <Route path="investments" element={<Investments />} />
             <Route path="settings" element={<Settings />} />
           </Route>
         </Route>
