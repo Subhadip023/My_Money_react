@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setLoading } from '../redux/uiSlice'
 import { setUser } from '../redux/authSlice'
 import { authService } from '../services'
+import { seedUserData } from '../utils/dataSeeder'
 import toast from 'react-hot-toast'
 import Button from '../components/shared/Button'
 import { Input } from '../components/shared/FormField'
@@ -33,6 +34,11 @@ function Register() {
                 const session = await authService.login(data)
                 if (session) {
                     const userData = await authService.getCurrentUser()
+                    try {
+                        await seedUserData(userData.$id)
+                    } catch (seedError) {
+                        console.error("Data seeding failed:", seedError)
+                    }
                     dispatch(setUser(userData))
                     toast.success("Account created successfully!")
                 }

@@ -7,6 +7,7 @@ import { setUser } from '../redux/authSlice';
 import { setLoading } from '../redux/uiSlice';
 import toast from 'react-hot-toast';
 import conf from '../config/config'
+import { dashboardRoutes } from '../config/routes'
 
 export default function Settings() {
     const dispatch = useDispatch();
@@ -50,13 +51,10 @@ export default function Settings() {
     };
 
     return (
-        <div className="max-w-3xl mx-auto space-y-8">
-            <div>
-                <h1 className="text-3xl font-black tracking-tight mb-2">Settings</h1>
-                <p className="text-neutral-500 dark:text-neutral-400">Manage your profile and application preferences.</p>
-            </div>
+        <div className="max-w-6xl mx-auto space-y-8">
+            
 
-            <div className="bg-white dark:bg-neutral-800 rounded-3xl border border-neutral-100 dark:border-neutral-700 shadow-sm overflow-hidden">
+            <div>
                 <div className="p-6 md:p-8 border-b border-neutral-100 dark:border-neutral-700">
                     <h2 className="text-xl font-bold mb-6">Profile Settings</h2>
                     
@@ -90,15 +88,25 @@ export default function Settings() {
 
                         <div>
                             <h3 className="text-xl font-bold text-neutral-900 dark:text-white">{user?.name}</h3>
-                            <p className="text-neutral-500 dark:text-neutral-400 mb-4">{user?.email}</p>
+                            <p className="text-neutral-500 dark:text-neutral-400 mb-2">{user?.email}</p>
+                            
+                            {user?.labels?.length > 0 && (
+                                <div className="flex flex-wrap gap-2 mb-4">
+                                    {user.labels.map((label) => (
+                                        <span key={label} className="px-2.5 py-0.5 rounded-lg bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 text-[10px] font-black uppercase tracking-widest border border-indigo-200 dark:border-indigo-800">
+                                            {label}
+                                        </span>
+                                    ))}
+                                </div>
+                            )}
+
                             <p className="text-sm text-neutral-500 max-w-sm">
                                 Click the camera icon to upload a new profile picture. Max size: 5MB.
                             </p>
                         </div>
                     </div>
                 </div>
-
-                <div className="p-6 md:p-8">
+                 <div className="p-5">
                     <h2 className="text-xl font-bold mb-6">Application Preferences</h2>
                     
                     <div className="flex items-center justify-between p-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-700">
@@ -130,6 +138,36 @@ export default function Settings() {
                         </label>
                     </div>
                 </div>
+                <div className="p-6 md:p-8 border-b border-neutral-100 dark:border-neutral-700">
+                    <h2 className="text-xl font-bold mb-6">Features & Access</h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {dashboardRoutes
+                            .filter(r => r.name && !r.path.includes(':'))
+                            .map((feature) => {
+                                const isUnlocked = !feature.requiredLabel || user?.labels?.includes(feature.requiredLabel);
+                                const icons = { 'Dashboard': '📊', 'Accounts': '💳', 'Categories': '🏷️', 'Transactions': '📝', 'Investments': '🏦', 'Loans': '💰', 'Settings': '⚙️' };
+                                return (
+                                    <div key={feature.path} className={`flex items-center justify-between p-4 rounded-2xl border transition-all ${isUnlocked ? 'bg-neutral-50 dark:bg-neutral-800/50 border-neutral-100 dark:border-neutral-700' : 'bg-neutral-100/50 dark:bg-neutral-900/30 border-dashed border-neutral-200 dark:border-neutral-800 opacity-60'}`}>
+                                        <div className="flex items-center gap-3">
+                                            <span className="text-xl">{icons[feature.name] || '📍'}</span>
+                                            <div>
+                                                <p className="font-bold text-sm">{feature.name}</p>
+                                                <p className="text-[10px] uppercase font-black tracking-widest text-neutral-400 mt-0.5">
+                                                    {feature.requiredLabel ? `${feature.requiredLabel} Access` : 'Core Feature'}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div className={`px-2 py-1 rounded-lg text-[8px] font-black uppercase tracking-tighter ${isUnlocked ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400' : 'bg-rose-100 text-rose-600 dark:bg-rose-500/20 dark:text-rose-400'}`}>
+                                            {isUnlocked ? '✓ Unlocked' : '✕ Locked'}
+                                        </div>
+                                    </div>
+                                )
+                            })
+                        }
+                    </div>
+                </div>
+
+               
             </div>
         </div>
     );

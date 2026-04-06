@@ -7,7 +7,6 @@ import transactionService from '../appwrite/transaction'
 import investmentService from '../appwrite/investment'
 import PieChart from '../components/PieChart'
 import FloatingCard from '../components/ui/FlotingCard'
-import InvestmentModal from '../components/ui/InvestmentModal'
 import { Link } from 'react-router-dom'
 export default function Dashboard() {
     const [totalBalance, setTotalBalance] = useState(0)
@@ -17,8 +16,6 @@ export default function Dashboard() {
     const [accounts, setAccounts] = useState([])
     const [investmentStats, setInvestmentStats] = useState({ totalInvested: 0, currentValue: 0 })
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const [isInvestmentModalOpen, setIsInvestmentModalOpen] = useState(false)
-    const dispatch = useDispatch()
     const user = useSelector((state) => state.auth.user)
 
     const calculateTotalBalance = async () => {
@@ -112,12 +109,7 @@ export default function Dashboard() {
                     <p className="text-neutral-500 dark:text-neutral-400 mt-1">Welcome back! Here's what's happening today.</p>
                 </div>
                 <div className="flex gap-4">
-                    <button
-                        onClick={() => setIsInvestmentModalOpen(true)}
-                        className="px-6 py-3 rounded-2xl bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-white font-bold transition-all active:scale-95 border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-700"
-                    >
-                        Add Portfolio
-                    </button>
+                  
                     <button
                         id="tour-add-transaction"
                         onClick={() => setIsModalOpen(true)}
@@ -132,15 +124,14 @@ export default function Dashboard() {
                 {[
                     { id: 'tour-balance-card', label: 'Total Balance', value: `₹${totalBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, icon: '💰', color: 'bg-emerald-500' },
                     { label: 'Monthly Income', value: `₹${monthlyIncome.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, icon: '📈', color: 'bg-indigo-500' },
-                    { label: 'Monthly Expenses', value: `₹${monthlyExpences.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, icon: '📉', color: 'bg-rose-500' },
-                    { 
+                    { label: 'Monthly Expenses', value: `₹${monthlyExpences.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, icon: '📉', color: 'bg-rose-500' },{ 
                         label: 'Portfolio Value', 
                         value: `₹${investmentStats.currentValue.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, 
                         icon: '🏦', 
                         color: 'bg-emerald-500', 
                         returns: investmentStats.currentValue - investmentStats.totalInvested 
                     },
-                ].map((stat, i) => (
+                ].filter(Boolean).map((stat, i) => (
                     <FloatingCard id={stat.id} key={i} className="p-6 md:p-8 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 shadow-sm overflow-hidden relative group">
                         <div className={`absolute top-0 right-0 w-24 h-24 ${stat.color} opacity-[0.03] rounded-bl-full transition-transform group-hover:scale-110`} />
                         <div className="flex items-center gap-4 mb-4">
@@ -200,11 +191,7 @@ export default function Dashboard() {
                 onTransactionSaved={handleTransactionAdded}
             />
 
-            <InvestmentModal
-                isOpen={isInvestmentModalOpen}
-                onClose={() => setIsInvestmentModalOpen(false)}
-                onInvestmentSaved={handleTransactionAdded}
-            />
+           
         </div>
     )
 }

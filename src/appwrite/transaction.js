@@ -177,6 +177,31 @@ class TransactionService {
             throw error;
         }
     }
+    async getMonthlyTransactions({ userId }) {
+        const now = new Date();
+        const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+        const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+        firstDay.setHours(0, 0, 0, 0);
+        lastDay.setHours(23, 59, 59, 999);
+        try {
+            return await this.databases.listDocuments(
+                conf.appwriteDataBaseId,
+                conf.appwriteCollectionIDTransaction,
+                [
+                    Query.equal('user_id', userId),
+                    Query.greaterThanEqual('$createdAt', firstDay.toISOString()),
+                    Query.lessThanEqual('$createdAt', lastDay.toISOString()),
+                    Query.orderDesc('$createdAt'),
+                    Query.limit(100),
+                    Query.select(["*", "categories.*", "accounts.*"])
+                ]
+            )
+        } catch (error) {
+            console.error("Appwrite service :: getMonthlyTransactions :: error", error);
+            throw error;
+        }
+    }
 }
 
 const transactionService = new TransactionService()

@@ -2,18 +2,12 @@ import { Routes, Route } from 'react-router-dom'
 import { MainLayout } from './layouts/MainLayout'
 import { Home } from './pages/Home'
 import { About } from './pages/About'
-import Dashboard from './pages/Dashboard'
-import Accounts from './pages/Accounts'
-import AccountDetails from './pages/AccountDetails'
-import Categories from './pages/Categories'
-import CategoryDetails from './pages/CategoryDetails'
-import Transactions from './pages/Transactions'
-import Settings from './pages/Settings'
-import Investments from './pages/Investments'
-import Loans from './pages/Loans'
+import { dashboardRoutes } from './config/routes'
+import DynamicGuard from './components/DynamicGuard'
 import GuestLayout from './layouts/GuestLayout'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import NotFound from './pages/NotFound'
 import { useDispatch ,useSelector} from 'react-redux'
 import { useEffect } from 'react'
 import authService from './appwrite/auth'
@@ -23,7 +17,6 @@ import Loader from './components/ui/Loader'
 import ProtectedRoutes from './components/ProtectedRoutes'
 import GuestRoutes from './components/GuestRoutes'
 import { Toaster } from 'react-hot-toast'
-import NotFound from './pages/NotFound'
 import { initializeTheme } from './redux/themeSlice'
 import MvpGuard from './components/MvpGuard'
 
@@ -80,7 +73,7 @@ function App() {
         {/* Everything inside GuestLayout by default */}
         <Route element={isAuthenticated ? <MainLayout /> : <GuestLayout />}>
           {/* Publicly Shared Pages */}
-          <Route index element={isAuthenticated ? <Dashboard /> : <Home />} />
+          <Route index element={ <Home />} />
           <Route path="about" element={<About />} />
 
           {/* Authenticated Guests Only (Login/Register) */}
@@ -96,18 +89,16 @@ function App() {
         {/* Dashbaord/Protected Pages (MainLayout) */}
         <Route element={<ProtectedRoutes />}>
           <Route element={<MainLayout />}>
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="accounts" element={<Accounts />} />
-            <Route path="accounts/:id" element={<AccountDetails />} />
-            <Route path="categories" element={<Categories />} />
-            <Route path="categories/:id" element={<CategoryDetails />} />
-            <Route path="transactions" element={<Transactions />} />
-            <Route path="investments" element={<Investments />} />
-            {/* MVP Access Only */}
-            <Route element={<MvpGuard user={user} />}>
-              <Route path="loans" element={<Loans />} />
-            </Route>
-            <Route path="settings" element={<Settings />} />
+            {dashboardRoutes.map((route) => {
+              const Component = route.element;
+              return route.requiredLabel ? (
+                <Route key={route.path} element={<DynamicGuard user={user} requiredLabel={route.requiredLabel} featureName={route.name} />}>
+                  <Route path={route.path} element={<Component />} />
+                </Route>
+              ) : (
+                <Route key={route.path} path={route.path} element={<Component />} />
+              );
+            })}
           </Route>
         </Route>
       </Routes>

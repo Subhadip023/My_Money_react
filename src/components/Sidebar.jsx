@@ -7,6 +7,8 @@ import { logout } from '../redux/authSlice'
 import { setLoading } from '../redux/uiSlice'
 import toast from 'react-hot-toast'
 
+import { dashboardRoutes } from '../config/routes'
+
 const Sidebar = ({ isOpen, onClose }) => {
     const location = useLocation()
     const navigate = useNavigate()
@@ -30,15 +32,29 @@ const Sidebar = ({ isOpen, onClose }) => {
         }
     }
 
-    const navItems = [
-        { name: 'Dashboard', path: '/dashboard', icon: '📊' },
-        { name: 'Accounts', path: '/accounts', icon: '💳' },
-        { name: 'Categories', path: '/categories', icon: '🏷️' },
-        { name: 'Transactions', path: '/transactions', icon: '📝' },
-        { name: 'Investments', path: '/investments', icon: '🏦' },
-        ...(user?.labels?.includes('mvp') ? [{ name: 'Loans', path: '/loans', icon: '💰' }] : []),
-        { name: 'Settings', path: '/settings', icon: '⚙️' },
-    ]
+    // Map icons to dashboard routes
+    const icons = {
+        'dashboard': '📊',
+        'accounts': '💳',
+        'categories': '🏷️',
+        'transactions': '📝',
+        'investments': '🏦',
+        'loans': '💰',
+        'monthly-report': '📋',
+        'settings': '⚙️'
+    }
+
+    const navItems = dashboardRoutes
+        .filter(route => !route.path.includes(':')) // Hide detail routes from sidebar
+        .filter(route => {
+            if (!route.requiredLabel) return true;
+            return user?.labels?.includes(route.requiredLabel);
+        })
+        .map(route => ({
+            name: route.name,
+            path: `/${route.path}`,
+            icon: icons[route.path.split('/')[0]] || '📍'
+        }));
 
     return (
         <>

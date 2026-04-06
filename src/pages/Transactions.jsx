@@ -4,7 +4,8 @@ import transactionService from '../appwrite/transaction'
 import { useSelector } from 'react-redux'
 import toast from 'react-hot-toast'
 import TransactionModal from '../components/ui/TransactionModal'
-
+import Button from '../components/shared/Button'
+import { exportTransactionsToExcel } from '../utils/excelExport'
 export default function Transactions() {
     const [transactions, setTransactions] = useState([])
     const [isModalOpen, setIsModalOpen] = useState(false)
@@ -19,6 +20,10 @@ export default function Transactions() {
             console.error(error)
             toast.error('Failed to fetch transactions')
         }
+    }
+
+    const exportExcel = () => {
+        exportTransactionsToExcel(transactions, 'transactions.xlsx')
     }
 
     useEffect(() => {
@@ -59,6 +64,8 @@ export default function Transactions() {
                 </div>
                 <div className='flex gap-4'>
                 </div>
+                <div className='flex flex-col gap-2 items-end justify-center' >
+                    
                 <button
                     onClick={() => {
                         setSelectedTransaction(null)
@@ -71,6 +78,11 @@ export default function Transactions() {
                     </svg>
                     Add Transaction
                 </button>
+                <Button variant="secondary" size="sm" onClick={exportExcel}>
+                        <span className="text-sm">📄</span>
+                        Export Excel
+                    </Button>
+                </div>
             </div>
 
             {/* Premium Transaction List */}
