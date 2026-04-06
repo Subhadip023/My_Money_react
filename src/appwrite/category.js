@@ -48,6 +48,19 @@ class CategoryService {
         }
     }
 
+    async getCategory(documentId) {
+        try {
+            return await this.databases.getDocument(
+                conf.appwriteDataBaseId,
+                conf.appwriteCollectionIDCategory,
+                documentId
+            )
+        } catch (error) {
+            console.error("Appwrite service :: getCategory :: error", error);
+            throw error;
+        }
+    }
+
     async updateCategory(documentId, { name, type }) {
         try {
             return await this.databases.updateDocument(
@@ -58,6 +71,18 @@ class CategoryService {
             )
         } catch (error) {
             console.error("Appwrite service :: updateCategory :: error", error);
+            throw error;
+        }
+    }
+    async getCategoryTransactions(categoryId) {
+        try {
+            return await this.databases.listDocuments(
+                conf.appwriteDataBaseId,
+                conf.appwriteCollectionIDTransaction,
+                [Query.equal('categoryId', categoryId)]
+            )
+        } catch (error) {
+            console.error("Appwrite service :: getCategoryTransactions :: error", error);
             throw error;
         }
     }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import CategoryModal from '../components/ui/CategoryModal'
 import { cn } from '../utils'
 import { categoryService } from '../services'
@@ -7,6 +8,7 @@ import { useSelector } from 'react-redux'
 import Button from '../components/shared/Button'
 
 export default function Categories() {
+    const navigate = useNavigate()
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [selectedCategory, setSelectedCategory] = useState(null)
     const [categories, setCategories] = useState([])
@@ -107,6 +109,7 @@ export default function Categories() {
                                 </td>
                                 <td className='px-8 py-6 text-right'>
                                     <div className="flex justify-end gap-2">
+                                        <Button variant="ghost" size="sm" onClick={() => navigate(`/categories/${category.$id}`)}>Details</Button>
                                         <Button variant="ghost" size="sm" onClick={() => handleEdit(category)}>Edit</Button>
                                         <Button variant="danger" size="sm" onClick={() => handleDelete(category.$id)}>Delete</Button>
                                     </div>

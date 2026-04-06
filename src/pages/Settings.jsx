@@ -6,6 +6,7 @@ import storageService from '../appwrite/storage';
 import { setUser } from '../redux/authSlice';
 import { setLoading } from '../redux/uiSlice';
 import toast from 'react-hot-toast';
+import conf from '../config/config'
 
 export default function Settings() {
     const dispatch = useDispatch();
@@ -63,8 +64,8 @@ export default function Settings() {
                         {/* Avatar display */}
                         <div className="relative group">
                             <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-indigo-50 dark:border-indigo-900/30 shadow-lg shadow-indigo-500/20 bg-neutral-100 dark:bg-neutral-700 flex items-center justify-center">
-                                {user?.prefs?.avatar ? (
-                                    <img src={user.prefs.avatar} alt="Avatar" className="w-full h-full object-cover" />
+                                {user?.prefs?.avatarId ? (
+                                    <img src={`https://fra.cloud.appwrite.io/v1/storage/buckets/${conf.appwriteBucketID}/files/${user.prefs.avatarId}/view?project=${conf.appwriteProjectId}`} alt="Avatar" className="w-full h-full object-cover" />
                                 ) : (
                                     <span className="text-4xl font-black text-indigo-400">
                                         {user?.name?.charAt(0).toUpperCase() || 'U'}
