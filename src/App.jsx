@@ -23,9 +23,29 @@ import ProtectedRoutes from './components/ProtectedRoutes'
 import GuestRoutes from './components/GuestRoutes'
 import { Toaster } from 'react-hot-toast'
 import NotFound from './pages/NotFound'
+import { initializeTheme } from './redux/themeSlice'
 
 function App() {
   const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(initializeTheme())
+  }, [dispatch])
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    const handleChange = (e) => {
+      if (localStorage.getItem('darkMode') === null) {
+        if (e.matches) {
+          document.documentElement.classList.add('dark')
+        } else {
+          document.documentElement.classList.remove('dark')
+        }
+      }
+    }
+    mediaQuery.addEventListener('change', handleChange)
+    return () => mediaQuery.removeEventListener('change', handleChange)
+  }, [])
 
   useEffect(() => {
     dispatch(setLoading(true))

@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { initializeTheme, toggleTheme } from '../redux/themeSlice'
+import { toggleTheme } from '../redux/themeSlice'
 import { useEffect, useState } from 'react'
 import Sidebar from '../components/Sidebar'
 import { cn } from '../utils'
@@ -13,9 +13,8 @@ export const MainLayout = () => {
     const user = useSelector((state) => state.auth.user)
     const [isSidebarOpen, setIsSidebarOpen] = useState(() => window.innerWidth >= 768)
     const darkMode = useSelector((state) => state.theme.darkMode)
+
     useEffect(() => {
-        dispatch(initializeTheme())
-        
         const handleResize = () => {
             if (window.innerWidth < 768) {
                 setIsSidebarOpen(false)
@@ -25,7 +24,7 @@ export const MainLayout = () => {
         }
         window.addEventListener('resize', handleResize)
         return () => window.removeEventListener('resize', handleResize)
-    }, [dispatch])
+    }, [])
 
     return (
         <div className={cn(
@@ -56,9 +55,9 @@ export const MainLayout = () => {
                         {/* Title or Breadcrumbs could go here */}
                     </div>
 
-                    {/* Right: User Profile & Actions */}
+                    {/* Right: User Profile & Actions & Theme Toggle */}
                     <div className="flex items-center gap-3 sm:gap-6">
-                        {/* Theme Toggle 
+                        {/* Theme Toggle */}
                         <button
                             onClick={() => dispatch(toggleTheme())}
                             title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
@@ -73,7 +72,7 @@ export const MainLayout = () => {
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
                                 </svg>
                             )}
-                        </button>*/}
+                        </button>
 
                         <div className="flex items-center gap-4">
                             <div className="text-right hidden sm:block">
@@ -98,8 +97,7 @@ export const MainLayout = () => {
                 </header>
 
                 <main className="flex-1 p-4 md:p-10">
-                    
-                        <Outlet />
+                    <Outlet />
                 </main>
                 <Footer />
             </div>
