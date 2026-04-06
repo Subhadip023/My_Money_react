@@ -26,7 +26,7 @@ export const Home = () => (
         </div>
 
         {/* Detailed Features Section */}
-        <div className="max-w-4xl mx-auto text-left py-12 border-t border-neutral-100 dark:border-neutral-800">
+        <div className="max-w-6xl mx-auto text-left py-12 border-t border-neutral-100 dark:border-neutral-800">
             <h3 className="text-2xl font-black mb-10 text-center text-neutral-900 dark:text-white">
                 Everything you need to <span className="text-indigo-600 dark:text-indigo-400">succeed</span>
             </h3>
@@ -34,11 +34,11 @@ export const Home = () => (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
                 {[
                     { title: 'Financial Dashboard', desc: 'Track Total Balance, Monthly Income, and Expenses in real-time.', icon: '🏠' },
-                    { title: 'Multi-Account Support', desc: 'Manage Savings, Cash, and Credit Cards in a single unified view.', icon: '💳' },
-                    { title: 'Seamless Transfers', desc: 'Move money between accounts with automatic double-entry records.', icon: '🔄' },
-                    { title: 'Smart Categorization', desc: 'Organize spending with custom labels like Food, Rent, and Travel.', icon: '🏷️' },
-                    { title: 'Deep Transaction History', desc: 'Complete CRUD support to keep your financial records accurate.', icon: '📝' },
-                    { title: 'Premium Dark Mode', desc: 'A stunning, high-contrast dark interface designed for eye comfort.', icon: '🌙' }
+                    { title: 'Account Management', desc: 'Manage Savings, Cash, and Credit Cards in a single unified view.', icon: '💳' },
+                    { title: 'Investment Portfolio', desc: 'Track Mutual Funds, Stocks, and FDs with premium valuation updates.', icon: '🏦' },
+                    { title: 'Loan & Debt Tracking', desc: 'Manage mortgages, personal loans, and settlements with ease.', icon: '💰' },
+                    { title: 'Monthy Financial Reports', desc: 'Detailed spending breakdowns and automated category analytics.', icon: '📊' },
+                    { title: 'Excel Data Export', desc: 'Professional data reporting for external analysis with one click.', icon: '📋' }
                 ].map((item, i) => (
                     <div key={i} className="flex gap-5 group">
                         <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center text-xl transition-transform group-hover:scale-110">

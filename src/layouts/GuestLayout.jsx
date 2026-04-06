@@ -76,9 +76,9 @@ function GuestLayout() {
                         </div>
                     </div>
                 ) : (
-                    <div className="bg-neutral-50 dark:bg-neutral-800/50 p-8 md:p-12 rounded-3xl border border-neutral-100 dark:border-neutral-700/50 backdrop-blur-sm transition-colors shadow-sm">
+                    
                         <Outlet />
-                    </div>
+                 
                 )}
             </main>
 

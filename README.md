@@ -1,21 +1,115 @@
-# React + Vite
+# MyMoney 💰
+**Next-Generation Personal Finance & Wealth Management Platform**
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+MyMoney is a feature-rich, high-performance financial command center designed to give you complete mastery over your entire financial lifecycle. From tracking daily expenses to managing complex investment portfolios and high-interest loans, MyMoney provides a premium, intuitive experience for modern wealth management.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Key Features
 
-## React Compiler
+### 🏢 Wealth Command Center
+- **Real-time Dashboard**: Instant overview of Total Balance, Monthly Income, and Expenses with high-fidelity visualizations.
+- **Multi-Account Sync**: Unified management for Savings, Cash, Credit Cards, and Wallets.
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+### 🏦 Investment & Portfolio Management
+- **Asset Diversity**: Track Mutual Funds, Stocks, Fixed Deposits (FDs), and more.
+- **Live Valuations**: Premium stats-based tracking of current values and return-on-investment (ROI).
 
-Note: This will impact Vite dev & build performances.
+### 💸 Debt & Loan Ledger
+- **Loan Lifecycle**: Complete tracking for Personal Loans, Mortgages, and Credit.
+- **Automated Settlements**: One-click settlements with automatic double-entry transaction logging.
 
-## Expanding the ESLint configuration
+### 📊 Advanced Reporting & Analytics
+- **Monthly Insight Report**: Deep-dive analytics into category-wise spending habits.
+- **Excel Export**: Professional-grade financial reporting with one-click Excel downloads.
+- **Visual Trends**: Highcharts-powered interactive data visualization.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-# MyMoney
-# MyMoney
-# My_Money_react
+### 🔐 Security & Access Control
+- **Appwrite Backend**: Secure authentication and industry-leading database encryption.
+- **Dynamic Guard System**: Config-driven permission management with tier-based access control (Labels: `mvp`, `premium`).
+
+---
+
+## 🛠️ Technology Stack
+
+- **Frontend**: React 19 + Vite 7
+- **State Management**: Redux Toolkit (Auth, Theme, UI)
+- **Backend Service**: Appwrite (Database, Auth, Storage)
+- **Visualization**: Highcharts (Dynamic Financial Graphs)
+- **Export Engine**: XLSX (Professional Spreadsheet Generation)
+- **Styling**: Tailwind CSS 4 + Modern CSS
+- **Modals & UI**: Custom-built accessible modal architecture and Floating Cards.
+
+---
+
+## ⚙️ Architecture Highlights
+
+### **Configuration-Driven Routing**
+The application uses a centralized `src/config/routes.js` to manage all dashboard features, permissions, and sidebar visibility dynamically.
+```javascript
+{
+    path: 'investments',
+    element: Investments,
+    name: 'Investments',
+    requiredLabel: 'premium'
+}
+```
+
+### **DynamicGuard System**
+A modular authorization wrapper (`src/components/DynamicGuard.jsx`) that enforces label-based access automatically across both the UI and navigation.
+
+### **Automated Data Seeding**
+Fresh users are automatically initialized with default finance categories and base accounts (Cash, Savings) on their first registration via the `dataSeeder` utility.
+
+---
+
+## 🛠️ Installation & Setup
+
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/Subhadip023/My_Money_react.git
+   cd My_Money_react
+   ```
+
+2. **Install Dependencies**:
+   ```bash
+   npm install
+   ```
+
+3. **Configure Environment Variables**:
+   Create a `.env` file in the root directory:
+   ```env
+   VITE_APPWRITE_URL=your_appwrite_url
+   VITE_APPWRITE_PROJECT_ID=your_project_id
+   VITE_APPWRITE_DATABASE_ID=your_db_id
+   VITE_APPWRITE_COLLECTION_ID_ACCOUNTS=...
+   VITE_APPWRITE_COLLECTION_ID_CATEGORIES=...
+   VITE_APPWRITE_COLLECTION_ID_TRANSACTIONS=...
+   VITE_APPWRITE_COLLECTION_ID_INVESTMENTS=...
+   VITE_APPWRITE_COLLECTION_ID_LOANS=...
+   VITE_APPWRITE_BUCKET_ID=...
+   ```
+
+4. **Launch Development Server**:
+   ```bash
+   npm run dev
+   ```
+
+---
+
+## 🎨 Design Philosophy
+MyMoney follows a **"Premium-First"** design aesthetic.
+- **Glassmorphism**: Subtle blurs and translucent borders.
+- **Responsive-Everything**: Pixel-perfect UI from 4K monitors to small mobile screens.
+- **Dynamic Dark Mode**: A high-contrast, eye-friendly dark interface that adapts instantly.
+
+---
+
+## 👨‍💻 Developer
+**Subhadip Chakraborty**
+*Creative Lead & Full Stack Developer*
+[GitHub Profile](https://github.com/Subhadip023)
+
+---
+
+**License**: [MIT](LICENSE)

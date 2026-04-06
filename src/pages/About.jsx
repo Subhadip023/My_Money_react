@@ -2,7 +2,7 @@ import React from 'react'
 
 export const About = () => {
     return (
-        <div className="max-w-4xl mx-auto py-10 md:py-16 space-y-16 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div className="max-w-6xl mx-auto py-10 md:py-16 space-y-16 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* Hero Section */}
             <div className="text-center space-y-6">
                 <div className="inline-block px-4 py-1.5 rounded-full bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-xs font-black uppercase tracking-widest mb-2 border border-indigo-100 dark:border-indigo-800/50">
@@ -12,7 +12,7 @@ export const About = () => {
                     Financial Mastery Simplified.
                 </h2>
                 <p className="text-neutral-500 dark:text-neutral-400 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed font-medium">
-                    We're building the next generation of personal finance. A place where tracking your wealth isn't a chore, but an experience.
+                    Experience the next generation of personal finance. From daily expense tracking to complex multi-asset portfolios including Investments and Loans, we've built a command center for your entire financial lifecycle.
                 </p>
             </div>
 
@@ -25,19 +25,29 @@ export const About = () => {
                         icon: '🛡️'
                     },
                     {
-                        title: 'Modern Analytics',
-                        desc: 'Real-time insights into your spending habits with a sleek, intuitive dashboard.',
+                        title: 'Wealth Analytics',
+                        desc: 'Real-time insights into your habitual spending habits with an advanced, intuitive dashboard.',
                         icon: '📊'
                     },
                     {
-                        title: 'Multi-Account',
-                        desc: 'Manage all your banks, wallets, and investments in one unified, beautiful interface.',
+                        title: 'Investment Portfolio',
+                        desc: 'Monitor your diversified assets, from Mutual Funds and Stocks to Fixed Deposits, with up-to-date valuations.',
+                        icon: '🏦'
+                    },
+                    {
+                        title: 'Debt & Loans',
+                        desc: 'Stay on top of mortgages, personal loans, and credit agreements with automated settlement tracking.',
+                        icon: '💰'
+                    },
+                    {
+                        title: 'Multi-Account Sync',
+                        desc: 'Unify all your cash accounts, savings, and wallets into a single, cohesive financial command center.',
                         icon: '💳'
                     },
                     {
-                        title: 'Smart Budgeting',
-                        desc: 'Set categories and track every rupee to ensure your net worth only goes up.',
-                        icon: '🏷️'
+                        title: 'Advanced Reporting',
+                        desc: 'Generate comprehensive monthly financial reports and export your entire history to Excel instantly.',
+                        icon: '📋'
                     }
                 ].map((item, i) => (
                     <div key={i} className="group p-8 rounded-[32px] bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-300 hover:-translate-y-1">
