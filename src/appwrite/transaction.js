@@ -7,11 +7,11 @@ class TransactionService {
         this.databases = new Databases(this.client)
     }
 
-    async createTransaction({ label, amount, type, userId, accountId, categoryId, skipBalanceUpdate = false }) {
+    async createTransaction({ label, amount, type, userId, accountId, categoryId, skipBalanceUpdate = false, loans }) {
         try {
             if (!skipBalanceUpdate) {
-                await accountService.updateAccountBalance({ userId, accountId, amount, type })
-            } 
+                await accountService.updateAccountBalance({ userId, accountId, amount, type, loans })
+            }
             return await this.databases.createDocument(
                 conf.appwriteDataBaseId,
                 conf.appwriteCollectionIDTransaction,
@@ -22,7 +22,8 @@ class TransactionService {
                     type,
                     user_id: userId,
                     accounts: accountId,
-                    categories: categoryId
+                    categories: categoryId,
+                    lonans: loans || null,
                 }
             )
         } catch (error) {

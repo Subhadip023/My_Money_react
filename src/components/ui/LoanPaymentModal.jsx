@@ -1,0 +1,185 @@
+import React, { useState, useEffect } from 'react'
+import Modal from './Modal'
+import Button from '../shared/Button'
+import { useSelector, useDispatch } from 'react-redux'
+import loanService from '../../appwrite/loans'
+import accountService from '../../appwrite/account'
+import transactionService from '../../appwrite/transaction'
+import { setLoading } from '../../redux/uiSlice'
+import toast from 'react-hot-toast'
+
+const LoanPaymentModal = ({ isOpen, onClose, loan, onPaymentSaved }) => {
+    const user = useSelector((state) => state.auth.user)
+    const dispatch = useDispatch()
+
+    const [accounts, setAccounts] = useState([])
+    const [formData, setFormData] = useState({
+        amount: '',
+        paymentDate: new Date().toISOString().split('T')[0],
+        accountId: '',
+        note: ''
+    })
+
+    useEffect(() => {
+        const fetchAccounts = async () => {
+            if (!user) return
+            try {
+                const res = await accountService.getAccounts({ userId: user.$id })
+                setAccounts(res.documents)
+                if (res.documents.length > 0 && !formData.accountId) {
+                    setFormData(prev => ({ ...prev, accountId: res.documents[0].$id }))
+                }
+            } catch (error) {
+                console.error("Failed to fetch accounts", error)
+            }
+        }
+        if (isOpen) fetchAccounts()
+    }, [user, isOpen])
+
+    useEffect(() => {
+        setFormData({
+            amount: '',
+            paymentDate: new Date().toISOString().split('T')[0],
+            accountId: accounts[0]?.$id || '',
+            note: ''
+        })
+    }, [loan, isOpen, accounts])
+
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        if (!user || !loan) return
+
+        const paymentAmount = Number(formData.amount)
+        if (paymentAmount <= 0) {
+            toast.error("Please enter a valid amount")
+            return
+        }
+
+        if (paymentAmount > loan.outstandingAmount) {
+            if (!window.confirm(`Payment amount (₹${paymentAmount}) is greater than outstanding balance (₹${loan.outstandingAmount}). Continue?`)) return
+        }
+
+        dispatch(setLoading(true))
+        try {
+            // 1. Update Loan Outstanding Amount
+            const newOutstanding = Math.max(0, Number(loan.outstandingAmount) - paymentAmount)
+            const newStatus = newOutstanding === 0 ? 'settled' : loan.status
+
+            await loanService.updateLoan(loan.$id, {
+                ...loan,
+                outstandingAmount: newOutstanding,
+                status: newStatus
+            })
+
+            // 2. Create Transaction
+            // If loanType is 'given', receiving payment is 'income'
+            // If loanType is 'taken', making payment is 'expense'
+            const txType = loan.loanType === 'given' ? 'income' : 'expense'
+            const label = `${loan.loanType === 'given' ? 'Loan Collection' : 'Loan Repayment'}: ${loan.loanName}`
+            
+            await transactionService.createTransaction({
+                label: formData.note ? `${label} (${formData.note})` : label,
+                amount: paymentAmount,
+                type: txType,
+                userId: user.$id,
+                accountId: formData.accountId,
+                categoryId: null,
+                loans: loan.$id,
+            })
+
+            toast.success('Payment recorded successfully')
+            onPaymentSaved()
+            onClose()
+        } catch (error) {
+            toast.error(error.message || 'Failed to record payment')
+        } finally {
+            dispatch(setLoading(false))
+        }
+    }
+
+    if (!loan) return null
+
+    return (
+        <Modal isOpen={isOpen} onClose={onClose} title={`Record Payment for ${loan.loanName}`}>
+            <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="p-6 rounded-[2rem] bg-indigo-50 dark:bg-indigo-500/5 border border-indigo-100 dark:border-indigo-500/20 mb-6 group transition-all">
+                    <div className="flex justify-between items-center mb-4">
+                        <span className="text-sm font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">Outstanding Balance</span>
+                        <span className="text-2xl font-black text-indigo-700 dark:text-white">₹{loan.outstandingAmount.toLocaleString('en-IN')}</span>
+                    </div>
+                    <div className="w-full bg-indigo-100 dark:bg-neutral-800 h-2 rounded-full overflow-hidden">
+                        <div 
+                            className="bg-indigo-500 h-full transition-all duration-1000" 
+                            style={{ width: `${Math.min(100, (Number(formData.amount) / loan.outstandingAmount) * 100 || 0)}%` }} 
+                        />
+                    </div>
+                </div>
+
+                <div className="space-y-4">
+                    <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 dark:text-neutral-500 ml-1">Payment Amount (₹)</label>
+                        <input
+                            required
+                            type="number"
+                            step="0.01"
+                            value={formData.amount}
+                            onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                            className="w-full px-4 py-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-700/50 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-xl font-black text-neutral-900 dark:text-white placeholder:text-neutral-300 dark:placeholder:text-neutral-600"
+                            placeholder="0.00"
+                            autoFocus
+                        />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 dark:text-neutral-500 ml-1">Account</label>
+                            <select
+                                required
+                                value={formData.accountId}
+                                onChange={(e) => setFormData({ ...formData, accountId: e.target.value })}
+                                className="w-full px-4 py-3.5 rounded-2xl bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-700/50 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-neutral-900 dark:text-white font-bold"
+                            >
+                                <option value="" disabled>Select Account</option>
+                                {accounts.map(acc => (
+                                    <option key={acc.$id} value={acc.$id}>{acc.accountName}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 dark:text-neutral-500 ml-1">Date</label>
+                            <input
+                                required
+                                type="date"
+                                value={formData.paymentDate}
+                                onChange={(e) => setFormData({ ...formData, paymentDate: e.target.value })}
+                                className="w-full px-4 py-3.5 rounded-2xl bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-700/50 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-neutral-900 dark:text-white font-bold"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 dark:text-neutral-500 ml-1">Note (Optional)</label>
+                        <input
+                            type="text"
+                            value={formData.note}
+                            onChange={(e) => setFormData({ ...formData, note: e.target.value })}
+                            className="w-full px-4 py-3.5 rounded-2xl bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-700/50 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-neutral-900 dark:text-white font-medium"
+                            placeholder="e.g. Part payment / EMI"
+                        />
+                    </div>
+                </div>
+
+                <div className="pt-6 flex gap-3">
+                    <Button type="button" variant="secondary" className="flex-1" onClick={onClose}>
+                        Cancel
+                    </Button>
+                    <Button type="submit" className="flex-1">
+                        Confirm Payment
+                    </Button>
+                </div>
+            </form>
+        </Modal>
+    )
+}
+
+export default LoanPaymentModal

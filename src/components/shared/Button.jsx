@@ -19,7 +19,8 @@ const Button = ({
         outline: "bg-transparent border-2 border-neutral-100 dark:border-neutral-700 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800",
         ghost: "bg-transparent hover:bg-neutral-50 dark:hover:bg-neutral-800 text-neutral-500",
         danger: "bg-rose-50 dark:bg-rose-500/10 text-rose-600 hover:bg-rose-100 dark:hover:bg-rose-500/20",
-        violet: "bg-violet-600 hover:bg-violet-700 text-white shadow-violet-600/20"
+        violet: "bg-violet-600 hover:bg-violet-700 text-white shadow-violet-600/20",
+        emerald: "bg-emerald-500 hover:bg-emerald-600 text-white shadow-emerald-500/20"
     }
 
     const sizes = {

@@ -37,6 +37,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         { name: 'Categories', path: '/categories', icon: '🏷️' },
         { name: 'Transactions', path: '/transactions', icon: '📝' },
         { name: 'Investments', path: '/investments', icon: '🏦' },
+        { name: 'Loans', path: '/loans', icon: '💰' },
         { name: 'Settings', path: '/settings', icon: '⚙️' },
         // { name: 'About', path: '/about', icon: 'ℹ️' },
     ]

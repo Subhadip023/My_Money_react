@@ -10,6 +10,7 @@ import CategoryDetails from './pages/CategoryDetails'
 import Transactions from './pages/Transactions'
 import Settings from './pages/Settings'
 import Investments from './pages/Investments'
+import Loans from './pages/Loans'
 import GuestLayout from './layouts/GuestLayout'
 import Login from './pages/Login'
 import Register from './pages/Register'
@@ -100,6 +101,7 @@ function App() {
             <Route path="categories/:id" element={<CategoryDetails />} />
             <Route path="transactions" element={<Transactions />} />
             <Route path="investments" element={<Investments />} />
+            <Route path="loans" element={<Loans />} />
             <Route path="settings" element={<Settings />} />
           </Route>
         </Route>

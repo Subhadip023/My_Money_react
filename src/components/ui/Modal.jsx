@@ -17,17 +17,17 @@ const Modal = ({ isOpen, onClose, title, children }) => {
     if (!isOpen) return null
 
     return createPortal(
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 transition-all duration-300">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 transition-all duration-500">
             {/* Backdrop */}
             <div
-                className="absolute inset-0 bg-neutral-900/40 dark:bg-black/60 backdrop-blur-sm transition-opacity"
+                className="absolute inset-0 bg-neutral-900/60 dark:bg-black/80 backdrop-blur-md transition-opacity duration-300"
                 onClick={onClose}
             />
 
             {/* Modal Content */}
             <div className={cn(
-                "relative w-full max-w-lg max-h-full flex flex-col bg-white dark:bg-neutral-800 rounded-3xl shadow-2xl overflow-hidden",
-                "border border-neutral-100 dark:border-neutral-700 transition-all transform scale-100 animate-in fade-in zoom-in duration-200"
+                "relative w-full max-w-lg max-h-[90vh] flex flex-col bg-white dark:bg-neutral-900 rounded-[2.5rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.3)] dark:shadow-[0_32px_64px_-16px_rgba(0,0,0,0.6)] overflow-hidden",
+                "border border-neutral-100 dark:border-neutral-800 transition-all transform scale-100 animate-in fade-in zoom-in slide-in-from-bottom-8 duration-500 ease-out"
             )}>
                 {/* Header */}
                 <div className="flex items-center justify-between p-4 sm:p-6 border-b border-neutral-100 dark:border-neutral-700 flex-shrink-0">
