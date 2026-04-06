@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import AddAccountModal from '../components/ui/AddAccountModal'
-import EditAccountModal from '../components/ui/EditAccountModal'
+import AccountModal from '../components/ui/AccountModal'
 import TransferModal from '../components/ui/TransferModal'
 import AddAmountModal from '../components/ui/AddAmountModal'
 import { accountService } from '../services'
@@ -13,7 +12,6 @@ export default function Accounts() {
     const navigate = useNavigate()
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [isTransferModalOpen, setIsTransferModalOpen] = useState(false)
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false)
     const [isAddAmountModalOpen, setIsAddAmountModalOpen] = useState(false)
     const [selectedAccount, setSelectedAccount] = useState(null)
     const [accounts, setAccounts] = useState([])
@@ -45,7 +43,7 @@ export default function Accounts() {
 
     const handleEditAccount = (account) => {
         setSelectedAccount(account)
-        setIsEditModalOpen(true)
+        setIsModalOpen(true)
     }
 
     const handleAddAmount = (account) => {
@@ -53,16 +51,14 @@ export default function Accounts() {
         setIsAddAmountModalOpen(true)
     }
 
-    const handleUpdateAccount = (updatedAccount) => {
-        setAccounts((prev) => prev.map((account) =>
-            account.$id === updatedAccount.$id ? updatedAccount : account
-        ))
-        toast.success('Account updated')
-    }
-
-    const handleAddAccount = (newAccount) => {
-        setAccounts((prev) => [...prev, newAccount])
-        toast.success('Account added')
+    const handleAccountSaved = (savedAccount) => {
+        setAccounts((prev) => {
+            const exists = prev.find(a => a.$id === savedAccount.$id)
+            if (exists) {
+                return prev.map(a => a.$id === savedAccount.$id ? savedAccount : a)
+            }
+            return [...prev, savedAccount]
+        })
     }
 
     const totalBalance = accounts.reduce((total, account) =>
@@ -91,7 +87,10 @@ export default function Accounts() {
                         Transfer
                     </Button>
                     <Button
-                        onClick={() => setIsModalOpen(true)}
+                        onClick={() => {
+                            setSelectedAccount(null)
+                            setIsModalOpen(true)
+                        }}
                         icon={() => (
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-5 h-5">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -153,8 +152,12 @@ export default function Accounts() {
                 </table>
             </div>
 
-            <AddAccountModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onAccountAdded={handleAddAccount} />
-            <EditAccountModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} account={selectedAccount} onAccountUpdated={handleUpdateAccount} />
+            <AccountModal 
+                isOpen={isModalOpen} 
+                onClose={() => setIsModalOpen(false)} 
+                account={selectedAccount} 
+                onAccountSaved={handleAccountSaved} 
+            />
             <AddAmountModal isOpen={isAddAmountModalOpen} onClose={() => setIsAddAmountModalOpen(false)} account={selectedAccount} onAmountAdded={fetchAccounts} />
             <TransferModal isOpen={isTransferModalOpen} onClose={() => setIsTransferModalOpen(false)} onTransferComplete={fetchAccounts} />
         </div>

@@ -10,7 +10,7 @@ import Button from '../shared/Button'
 import { Input, Select } from '../shared/FormField'
 import TransactionTypeToggle from '../shared/TransactionTypeToggle'
 
-const AddTransactionModal = ({ isOpen, onClose, onTransactionAdded }) => {
+const TransactionModal = ({ isOpen, onClose, transaction, onTransactionSaved }) => {
     const { register, handleSubmit, reset, watch, setValue, formState: { errors } } = useForm({
         defaultValues: { type: 'expense' }
     })
@@ -20,6 +20,7 @@ const AddTransactionModal = ({ isOpen, onClose, onTransactionAdded }) => {
     const loading = useSelector((state) => state.ui.loading)
     const [accounts, setAccounts] = useState([])
     const [categories, setCategories] = useState([])
+    const isEdit = !!transaction
 
     useEffect(() => {
         if (isOpen && user) {
@@ -40,29 +41,64 @@ const AddTransactionModal = ({ isOpen, onClose, onTransactionAdded }) => {
         }
     }, [isOpen, user])
 
+    useEffect(() => {
+        if (isOpen) {
+            if (transaction) {
+                const accId = typeof transaction.accounts === 'object' ? transaction.accounts?.$id : transaction.accounts
+                const catId = typeof transaction.categories === 'object' ? transaction.categories?.$id : transaction.categories
+
+                reset({
+                    label: transaction.label,
+                    amount: transaction.amount,
+                    type: transaction.type,
+                    accountId: accId,
+                    categoryId: catId
+                })
+            } else {
+                reset({
+                    label: '',
+                    amount: '',
+                    type: 'expense',
+                    accountId: '',
+                    categoryId: ''
+                })
+            }
+        }
+    }, [transaction, reset, isOpen])
+
     const onSubmit = async (data) => {
         if (loading) return
         dispatch(setLoading(true))
         try {
-            const res = await transactionService.createTransaction({
-                ...data,
-                amount: parseFloat(data.amount),
-                userId: user.$id
-            })
+            let res
+            if (isEdit) {
+                res = await transactionService.updateTransaction(transaction.$id, {
+                    ...data,
+                    amount: parseFloat(data.amount),
+                    userId: user.$id
+                })
+                toast.success("Transaction updated")
+            } else {
+                res = await transactionService.createTransaction({
+                    ...data,
+                    amount: parseFloat(data.amount),
+                    userId: user.$id
+                })
+                toast.success("Transaction recorded")
+            }
 
-            onTransactionAdded(res)
-            reset()
-            onClose()
-            toast.success("Transaction recorded")
+            if (res) {
+                onTransactionSaved(res)
+                onClose()
+            }
         } catch (error) {
-            toast.error(error.message || 'Failed to record transaction.')
+            toast.error(error.message || `Failed to ${isEdit ? 'update' : 'record'} transaction.`)
         } finally {
             dispatch(setLoading(false))
         }
     }
 
     const type = watch('type')
-
     const accountOptions = accounts.map(acc => ({ label: acc.accountName, value: acc.$id }))
     const categoryOptions = categories.map(cat => ({
         label: `${cat.name} (${cat.type})`,
@@ -70,8 +106,8 @@ const AddTransactionModal = ({ isOpen, onClose, onTransactionAdded }) => {
     }))
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title="Add New Transaction">
-            {(!accounts.length || !categories.length) ? (
+        <Modal isOpen={isOpen} onClose={onClose} title={isEdit ? "Edit Transaction" : "Add New Transaction"}>
+            {(!isEdit && (!accounts.length || !categories.length)) ? (
                 <div className="py-10 flex flex-col items-center text-center space-y-6">
                     <div className="w-20 h-20 rounded-3xl bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center text-4xl shadow-inner">⚠️</div>
                     <div className="space-y-2">
@@ -141,7 +177,9 @@ const AddTransactionModal = ({ isOpen, onClose, onTransactionAdded }) => {
 
                     <div className="pt-4 flex gap-4">
                         <Button onClick={onClose} variant="secondary" className="flex-1">Cancel</Button>
-                        <Button type="submit" loading={loading} className="flex-1">Record</Button>
+                        <Button type="submit" loading={loading} className="flex-1">
+                            {isEdit ? "Save Changes" : "Record"}
+                        </Button>
                     </div>
                 </form>
             )}
@@ -149,4 +187,4 @@ const AddTransactionModal = ({ isOpen, onClose, onTransactionAdded }) => {
     )
 }
 
-export default AddTransactionModal;
+export default TransactionModal

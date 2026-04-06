@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { setLoading } from '../redux/uiSlice'
 import accountService from '../appwrite/account'
-import AddTransactionModal from '../components/ui/AddTransactionModal'
+import TransactionModal from '../components/ui/TransactionModal'
 import transactionService from '../appwrite/transaction'
 import investmentService from '../appwrite/investment'
 import PieChart from '../components/PieChart'
 import FloatingCard from '../components/ui/FlotingCard'
+import InvestmentModal from '../components/ui/InvestmentModal'
+import { Link } from 'react-router-dom'
 export default function Dashboard() {
     const [totalBalance, setTotalBalance] = useState(0)
     const [monthlyExpences, setMonthlyExpences] = useState(0)
@@ -15,6 +17,7 @@ export default function Dashboard() {
     const [accounts, setAccounts] = useState([])
     const [investmentStats, setInvestmentStats] = useState({ totalInvested: 0, currentValue: 0 })
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const [isInvestmentModalOpen, setIsInvestmentModalOpen] = useState(false)
     const dispatch = useDispatch()
     const user = useSelector((state) => state.auth.user)
 
@@ -108,13 +111,21 @@ export default function Dashboard() {
                     <h1 className="text-3xl font-black tracking-tight">Financial Overview</h1>
                     <p className="text-neutral-500 dark:text-neutral-400 mt-1">Welcome back! Here's what's happening today.</p>
                 </div>
-                <button
-                    id="tour-add-transaction"
-                    onClick={() => setIsModalOpen(true)}
-                    className="px-6 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold transition-all active:scale-95 shadow-lg shadow-indigo-600/20"
-                >
-                    Add Transaction
-                </button>
+                <div className="flex gap-4">
+                    <button
+                        onClick={() => setIsInvestmentModalOpen(true)}
+                        className="px-6 py-3 rounded-2xl bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-white font-bold transition-all active:scale-95 border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-700"
+                    >
+                        Add Portfolio
+                    </button>
+                    <button
+                        id="tour-add-transaction"
+                        onClick={() => setIsModalOpen(true)}
+                        className="px-6 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold transition-all active:scale-95 shadow-lg shadow-indigo-600/20"
+                    >
+                        Add Transaction
+                    </button>
+                </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -183,10 +194,16 @@ export default function Dashboard() {
                 
             </div>
 
-            <AddTransactionModal
+            <TransactionModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                onTransactionAdded={handleTransactionAdded}
+                onTransactionSaved={handleTransactionAdded}
+            />
+
+            <InvestmentModal
+                isOpen={isInvestmentModalOpen}
+                onClose={() => setIsInvestmentModalOpen(false)}
+                onInvestmentSaved={handleTransactionAdded}
             />
         </div>
     )

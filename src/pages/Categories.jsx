@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import AddCategoryModal from '../components/ui/AddCategoryModal'
-import EditCategoryModal from '../components/ui/EditCategoryModal'
+import CategoryModal from '../components/ui/CategoryModal'
 import { cn } from '../utils'
 import { categoryService } from '../services'
 import toast from 'react-hot-toast'
@@ -9,7 +8,6 @@ import Button from '../components/shared/Button'
 
 export default function Categories() {
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false)
     const [selectedCategory, setSelectedCategory] = useState(null)
     const [categories, setCategories] = useState([])
     const user = useSelector((state) => state.auth.user)
@@ -26,22 +24,21 @@ export default function Categories() {
         if (user) fetchCategories()
     }, [user])
 
-    const handleAddCategory = (newCategory) => {
-        setCategories((prev) => [...prev, newCategory])
-        toast.success('Category added')
+    const handleCategorySaved = (savedCategory) => {
+        setCategories((prev) => {
+            const exists = prev.find(c => c.$id === savedCategory.$id)
+            if (exists) {
+                return prev.map(c => c.$id === savedCategory.$id ? savedCategory : c)
+            }
+            return [...prev, savedCategory]
+        })
     }
 
     const handleEdit = (category) => {
         setSelectedCategory(category)
-        setIsEditModalOpen(true)
+        setIsModalOpen(true)
     }
 
-    const handleUpdateCategory = (updatedCategory) => {
-        setCategories((prev) => prev.map((cat) =>
-            cat.$id === updatedCategory.$id ? updatedCategory : cat
-        ))
-        toast.success('Category updated')
-    }
 
     const handleDelete = async (id) => {
         if (!window.confirm("Delete this category? This might affect existing transactions.")) return
@@ -64,7 +61,10 @@ export default function Categories() {
                     </p>
                 </div>
                 <Button
-                    onClick={() => setIsModalOpen(true)}
+                    onClick={() => {
+                        setSelectedCategory(null)
+                        setIsModalOpen(true)
+                    }}
                     icon={() => (
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-5 h-5">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -122,8 +122,12 @@ export default function Categories() {
                 )}
             </div>
 
-            <AddCategoryModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onCategoryAdded={handleAddCategory} />
-            <EditCategoryModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} category={selectedCategory} onCategoryUpdated={handleUpdateCategory} />
+            <CategoryModal 
+                isOpen={isModalOpen} 
+                onClose={() => setIsModalOpen(false)} 
+                category={selectedCategory} 
+                onCategorySaved={handleCategorySaved} 
+            />
         </div>
     )
 }

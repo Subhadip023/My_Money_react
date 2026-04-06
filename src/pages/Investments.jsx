@@ -4,21 +4,14 @@ import Button from '../components/shared/Button'
 import FloatingCard from '../components/ui/FlotingCard'
 import Modal from '../components/ui/Modal'
 import investmentService from '../appwrite/investment'
+import transactionService from '../appwrite/transaction'
+import InvestmentModal from '../components/ui/InvestmentModal'
 import toast from 'react-hot-toast'
 
 export default function Investments() {
     const [investments, setInvestments] = useState([])
-    const [isAddModalOpen, setIsAddModalOpen] = useState(false)
-    const [editingId, setEditingId] = useState(null)
-    const [formData, setFormData] = useState({
-        investmentType: 'mf',
-        investmentName: '',
-        investedAmount: '',
-        currentValue: '',
-        quantity: '',
-        symbol: '',
-        avgBuyPrice: ''
-    })
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [selectedInvestment, setSelectedInvestment] = useState(null)
     const user = useSelector((state) => state.auth.user)
 
     const fetchInvestments = async () => {
@@ -40,53 +33,13 @@ export default function Investments() {
     const totalReturns = totalCurrentValue - totalInvested
     const returnsPercentage = totalInvested > 0 ? ((totalReturns / totalInvested) * 100).toFixed(2) : 0
 
-    const handleAddInvestment = async (e) => {
-        e.preventDefault()
-        if (!formData.investmentName || !formData.investedAmount || !formData.currentValue) {
-            toast.error('Please fill all required fields')
-            return
-        }
-
-        try {
-            const avgPrice = formData.avgBuyPrice || (Number(formData.investedAmount) / Number(formData.quantity || 1))
-            
-            const payload = {
-                userId: user.$id,
-                ...formData,
-                investedAmount: Number(formData.investedAmount),
-                currentValue: Number(formData.currentValue),
-                quantity: Number(formData.quantity || 0),
-                avgBuyPrice: Number(avgPrice)
-            }
-
-            if (editingId) {
-                await investmentService.updateInvestment(editingId, payload)
-                toast.success('Investment updated successfully')
-            } else {
-                await investmentService.createInvestment(payload)
-                toast.success('Investment added successfully')
-            }
-            
-            setIsAddModalOpen(false)
-            setEditingId(null)
-            setFormData({
-                investmentType: 'mf',
-                investmentName: '',
-                investedAmount: '',
-                currentValue: '',
-                quantity: '',
-                symbol: '',
-                avgBuyPrice: ''
-            })
-            fetchInvestments()
-        } catch (error) {
-            toast.error(error.message || `Failed to ${editingId ? 'update' : 'add'} investment`)
-        }
+    const handleInvestmentSaved = () => {
+        fetchInvestments()
     }
 
     const handleDelete = async (id) => {
-        if (!window.confirm("Delete this investment?")) return
-        const success = await investmentService.deleteInvestment(id)
+        if (!window.confirm("Delete this investment? (Linked transaction will also be deleted)")) return
+        const success = await investmentService.deleteInvestment(id, transactionService)
         if (success) {
             setInvestments(investments.filter(inv => inv.$id !== id))
             toast.success('Investment deleted')
@@ -96,17 +49,8 @@ export default function Investments() {
     }
 
     const handleEdit = (inv) => {
-        setEditingId(inv.$id)
-        setFormData({
-            investmentType: inv.investmentType,
-            investmentName: inv.investmentName,
-            investedAmount: inv.investedAmount,
-            currentValue: inv.currentValue,
-            quantity: inv.quantity,
-            symbol: inv.symbol,
-            avgBuyPrice: inv.avgBuyPrice
-        })
-        setIsAddModalOpen(true)
+        setSelectedInvestment(inv)
+        setIsModalOpen(true)
     }
 
     const getTypeColor = (type) => {
@@ -130,17 +74,8 @@ export default function Investments() {
                 <div className='flex gap-3'>
                     <Button
                         onClick={() => {
-                            setEditingId(null)
-                            setFormData({
-                                investmentType: 'mf',
-                                investmentName: '',
-                                investedAmount: '',
-                                currentValue: '',
-                                quantity: '',
-                                symbol: '',
-                                avgBuyPrice: ''
-                            })
-                            setIsAddModalOpen(true)
+                            setSelectedInvestment(null)
+                            setIsModalOpen(true)
                         }}
                         icon={() => (
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-5 h-5">
@@ -235,108 +170,12 @@ export default function Investments() {
                 </table>
             </div>
 
-            <Modal 
-                isOpen={isAddModalOpen} 
-                onClose={() => {
-                    setIsAddModalOpen(false)
-                    setEditingId(null)
-                }} 
-                title={editingId ? "Edit Investment" : "Add Investment"}
-            >
-                <form onSubmit={handleAddInvestment} className="space-y-5">
-                        <div>
-                            <label className="block text-sm font-bold text-neutral-700 dark:text-neutral-300 mb-2">Type</label>
-                            <select
-                                className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl px-4 py-3 font-medium outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white"
-                                value={formData.investmentType}
-                                onChange={(e) => setFormData({...formData, investmentType: e.target.value})}
-                            >
-                                <option value="mf">Mutual Fund</option>
-                                <option value="stock">Stock</option>
-                                <option value="fd">Fixed Deposit</option>
-                                {/* <option value="Gold">Gold</option> */}
-                            </select>
-                        </div>
-                        {formData.investmentType=='stock' && <div>
-                            <label className="block text-sm font-bold text-neutral-700 dark:text-neutral-300 mb-2">Symbol (Optional)</label>
-                            <input
-                                type="text"
-                                placeholder="e.g. RELIANCE"
-                                className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl px-4 py-3 font-medium outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white"
-                                value={formData.symbol}
-                                onChange={(e) => setFormData({...formData, symbol: e.target.value})}
-                            />
-                        </div>}
-                    <div>
-                        <label className="block text-sm font-bold text-neutral-700 dark:text-neutral-300 mb-2">Investment Name</label>
-                        <input
-                            type="text"
-                            required
-                            placeholder="e.g. Quant Flexi Cap, Axis Bank FD"
-                            className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl px-4 py-3 font-medium outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white"
-                            value={formData.investmentName}
-                            onChange={(e) => setFormData({...formData, investmentName: e.target.value})}
-                        />
-                    </div>
-                         {formData.investmentType=='stock' && <div>
-                            <label className="block text-sm font-bold text-neutral-700 dark:text-neutral-300 mb-2">Quantity (Optional)</label>
-                            <input
-                                type="number"
-                                min="0"
-                                className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl px-4 py-3 font-medium outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white"
-                                value={formData.quantity}
-                                onChange={(e) => setFormData({...formData, quantity: e.target.value})}
-                            />
-                        </div>}
-                        <div>
-                            <label className="block text-sm font-bold text-neutral-700 dark:text-neutral-300 mb-2">Invested Amount (₹)</label>
-                            <input
-                                type="number"
-                                required
-                                min="0"
-                                className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl px-4 py-3 font-medium outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white"
-                                value={formData.investedAmount}
-                                onChange={(e) => setFormData({...formData, investedAmount: e.target.value})}
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-bold text-neutral-700 dark:text-neutral-300 mb-2">Current Value (₹)</label>
-                            <input
-                                type="number"
-                                required
-                                min="0"
-                                className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl px-4 py-3 font-medium outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white"
-                                value={formData.currentValue}
-                                onChange={(e) => setFormData({...formData, currentValue: e.target.value})}
-                            />
-                        </div>
-                         {formData.investmentType=='stock' && <div>
-                            <label className="block text-sm font-bold text-neutral-700 dark:text-neutral-300 mb-2">Avg Buy Price (Optional)</label>
-                            <input
-                                type="number"
-                                placeholder="Auto from qty if empty"
-                                className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl px-4 py-3 font-medium outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white"
-                                value={formData.avgBuyPrice}
-                                onChange={(e) => setFormData({...formData, avgBuyPrice: e.target.value})}
-                            />
-                        </div>}
-                    <div className="pt-4 flex gap-3">
-                        <button
-                            type="button"
-                            className="flex-1 py-3 px-4 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 font-bold rounded-2xl hover:bg-neutral-200 dark:hover:bg-neutral-700 transition"
-                            onClick={() => setIsAddModalOpen(false)}
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            type="submit"
-                            className="flex-1 py-3 px-4 bg-indigo-600 text-white font-bold rounded-2xl hover:bg-indigo-700 shadow-lg shadow-indigo-600/20 active:scale-95 transition"
-                        >
-                            {editingId ? "Update Investment" : "Save Investment"}
-                        </button>
-                    </div>
-                </form>
-            </Modal>
+            <InvestmentModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                investment={selectedInvestment}
+                onInvestmentSaved={handleInvestmentSaved}
+            />
         </div>
     )
 }

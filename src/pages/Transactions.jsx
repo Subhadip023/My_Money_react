@@ -3,13 +3,11 @@ import { cn } from '../utils'
 import transactionService from '../appwrite/transaction'
 import { useSelector } from 'react-redux'
 import toast from 'react-hot-toast'
-import AddTransactionModal from '../components/ui/AddTransactionModal'
-import EditTransactionModal from '../components/ui/EditTransactionModal'
+import TransactionModal from '../components/ui/TransactionModal'
 
 export default function Transactions() {
     const [transactions, setTransactions] = useState([])
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false)
     const [selectedTransaction, setSelectedTransaction] = useState(null)
     const user = useSelector((state) => state.auth.user)
 
@@ -27,17 +25,13 @@ export default function Transactions() {
         if (user) fetchTransactions()
     }, [user])
 
-    const handleTransactionAdded = () => {
-        fetchTransactions()
-    }
-
-    const handleTransactionUpdated = () => {
+    const handleTransactionSaved = () => {
         fetchTransactions()
     }
 
     const handleEdit = (tx) => {
         setSelectedTransaction(tx)
-        setIsEditModalOpen(true)
+        setIsModalOpen(true)
     }
 
     const handleDelete = async (id) => {
@@ -66,7 +60,10 @@ export default function Transactions() {
                 <div className='flex gap-4'>
                 </div>
                 <button
-                    onClick={() => setIsModalOpen(true)}
+                    onClick={() => {
+                        setSelectedTransaction(null)
+                        setIsModalOpen(true)
+                    }}
                     className='px-8 py-4 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-lg transition-all active:scale-95 shadow-xl shadow-indigo-600/20 flex items-center gap-2 cursor-pointer'
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-5 h-5">
@@ -152,17 +149,11 @@ export default function Transactions() {
                 )}
             </div>
 
-            <AddTransactionModal
+            <TransactionModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                onTransactionAdded={handleTransactionAdded}
-            />
-
-            <EditTransactionModal
-                isOpen={isEditModalOpen}
-                onClose={() => setIsEditModalOpen(false)}
                 transaction={selectedTransaction}
-                onTransactionUpdated={handleTransactionUpdated}
+                onTransactionSaved={handleTransactionSaved}
             />
         </div>
     )

@@ -17,7 +17,8 @@ class InvestmentService {
         currentValue,
         symbol,
         quantity,
-        avgBuyPrice
+        avgBuyPrice,
+        transactionId
     }) {
         
         try {
@@ -33,7 +34,8 @@ class InvestmentService {
                     currentValue,
                     symbol,
                     quantity,
-                    avgBuyPrice
+                    avgBuyPrice,
+                    transactionId
                 }
             );
         } catch (error) {
@@ -69,8 +71,21 @@ class InvestmentService {
         }
     }
 
-    async deleteInvestment(documentId) {
+    async deleteInvestment(documentId, transactionService) {
         try {
+            // 1. Fetch investment to get transactionId
+            const inv = await this.databases.getDocument(
+                conf.appwriteDataBaseId,
+                conf.appwriteCollectionIDInvestment,
+                documentId
+            );
+
+            // 2. Delete transaction if exists
+            if (inv.transactionId && transactionService) {
+                await transactionService.deleteTransaction(inv.transactionId);
+            }
+
+            // 3. Delete the investment document
             await this.databases.deleteDocument(
                 conf.appwriteDataBaseId,
                 conf.appwriteCollectionIDInvestment,

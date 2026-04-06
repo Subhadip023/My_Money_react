@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { setLoading } from '../../redux/uiSlice'
@@ -7,35 +7,62 @@ import Modal from './Modal'
 import { cn } from '../../utils'
 import categoryService from '../../appwrite/category'
 
-const AddCategoryModal = ({ isOpen, onClose, onCategoryAdded }) => {
+const CategoryModal = ({ isOpen, onClose, category, onCategorySaved }) => {
     const { register, handleSubmit, reset, formState: { errors } } = useForm()
     const dispatch = useDispatch()
     const user = useSelector((state) => state.auth.user)
     const loading = useSelector((state) => state.ui.loading)
+    const isEdit = !!category
+
+    useEffect(() => {
+        if (isOpen) {
+            if (category) {
+                reset({
+                    name: category.name,
+                    type: category.type
+                })
+            } else {
+                reset({
+                    name: '',
+                    type: 'expense'
+                })
+            }
+        }
+    }, [category, reset, isOpen])
 
     const onSubmit = async (data) => {
         if (loading) return
         dispatch(setLoading(true))
         try {
-            const res = await categoryService.createCategory({
-                name: data.name,
-                type: data.type,
-                userId: user.$id
-            })
+            let res
+            if (isEdit) {
+                res = await categoryService.updateCategory(category.$id, {
+                    name: data.name,
+                    type: data.type
+                })
+                toast.success("Category updated successfully")
+            } else {
+                res = await categoryService.createCategory({
+                    name: data.name,
+                    type: data.type,
+                    userId: user.$id
+                })
+                toast.success("Category added successfully")
+            }
+            
             if (res) {
-                onCategoryAdded(res)
-                reset()
+                onCategorySaved(res)
                 onClose()
             }
         } catch (error) {
-            toast.error(error.message || 'Failed to add category.')
+            toast.error(error.message || `Failed to ${isEdit ? 'update' : 'add'} category.`)
         } finally {
             dispatch(setLoading(false))
         }
     }
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title="Add New Category">
+        <Modal isOpen={isOpen} onClose={onClose} title={isEdit ? "Edit Category" : "Add New Category"}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div>
                     <label className="block text-sm font-bold mb-2 ml-1 text-neutral-700 dark:text-neutral-300 " >
@@ -81,8 +108,6 @@ const AddCategoryModal = ({ isOpen, onClose, onCategoryAdded }) => {
                     )}
                 </div>
 
-
-
                 <div className="pt-4 flex gap-4">
                     <button
                         type="button"
@@ -99,7 +124,7 @@ const AddCategoryModal = ({ isOpen, onClose, onCategoryAdded }) => {
                             loading && "opacity-50 cursor-not-allowed "
                         )}
                     >
-                        {loading ? 'Adding...' : 'Create Category'}
+                        {loading ? 'Processing...' : (isEdit ? 'Save Changes' : 'Create Category')}
                     </button>
                 </div>
             </form>
@@ -107,4 +132,4 @@ const AddCategoryModal = ({ isOpen, onClose, onCategoryAdded }) => {
     )
 }
 
-export default AddCategoryModal
+export default CategoryModal
