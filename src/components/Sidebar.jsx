@@ -31,15 +31,13 @@ const Sidebar = ({ isOpen, onClose }) => {
     }
 
     const navItems = [
-        // { name: 'Home', path: '/', icon: '🏠' },
         { name: 'Dashboard', path: '/dashboard', icon: '📊' },
         { name: 'Accounts', path: '/accounts', icon: '💳' },
         { name: 'Categories', path: '/categories', icon: '🏷️' },
         { name: 'Transactions', path: '/transactions', icon: '📝' },
         { name: 'Investments', path: '/investments', icon: '🏦' },
-        { name: 'Loans', path: '/loans', icon: '💰' },
+        ...(user?.labels?.includes('mvp') ? [{ name: 'Loans', path: '/loans', icon: '💰' }] : []),
         { name: 'Settings', path: '/settings', icon: '⚙️' },
-        // { name: 'About', path: '/about', icon: 'ℹ️' },
     ]
 
     return (

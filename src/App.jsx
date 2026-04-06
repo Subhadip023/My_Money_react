@@ -25,6 +25,7 @@ import GuestRoutes from './components/GuestRoutes'
 import { Toaster } from 'react-hot-toast'
 import NotFound from './pages/NotFound'
 import { initializeTheme } from './redux/themeSlice'
+import MvpGuard from './components/MvpGuard'
 
 function App() {
   const dispatch = useDispatch()
@@ -68,6 +69,7 @@ function App() {
 
 
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated)
+  const user = useSelector((state) => state.auth.user)
 
   return (
     <>
@@ -101,7 +103,10 @@ function App() {
             <Route path="categories/:id" element={<CategoryDetails />} />
             <Route path="transactions" element={<Transactions />} />
             <Route path="investments" element={<Investments />} />
-            <Route path="loans" element={<Loans />} />
+            {/* MVP Access Only */}
+            <Route element={<MvpGuard user={user} />}>
+              <Route path="loans" element={<Loans />} />
+            </Route>
             <Route path="settings" element={<Settings />} />
           </Route>
         </Route>
