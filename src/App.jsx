@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import { MainLayout } from './layouts/MainLayout'
 import { Home } from './pages/Home'
 import { About } from './pages/About'
@@ -73,8 +73,8 @@ function App() {
         {/* Everything inside GuestLayout by default */}
         <Route element={isAuthenticated ? <MainLayout /> : <GuestLayout />}>
           {/* Publicly Shared Pages */}
-          <Route index element={isAuthenticated ? <Dashboard /> : <Home />} />
-          <Route path="about" element={<About />} />
+          <Route index element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Home />} />
+          <Route path="about" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <About />} />
 
           {/* Authenticated Guests Only (Login/Register) */}
           <Route element={<GuestRoutes />}>
