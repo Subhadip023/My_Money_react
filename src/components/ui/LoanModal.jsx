@@ -113,23 +113,24 @@ const LoanModal = ({ isOpen, onClose, loan, onLoanSaved }) => {
             } else {
                     const newLoan = await loanService.createLoan(data)
                     
-                    if (formData.trackTransaction) {
+                    if (formData.trackTransaction && formData.accountId!=0) {
                         const txType = formData.loanType === 'given' ? 'expense' : 'income'
                         const label = `${formData.loanType === 'given' ? 'Loan Given' : 'Loan Taken'}: ${formData.loanName}`
                         
                         // Find a category related to loans if possible, otherwise use null
                         const loanCategory = categories.find(c => c.name.toLowerCase().includes('loan'))
                         const finalCategoryId = formData.categoryId || (loanCategory ? loanCategory.$id : null)
-
-                        await transactionService.createTransaction({
-                            label,
-                            amount: Number(formData.principalAmount),
-                            type: txType,
-                            userId: user.$id,
-                            accountId: formData.accountId,
-                            categoryId: finalCategoryId,
-                            loans: newLoan.$id
-                        })
+                        if (accountId!=0) {
+                            await transactionService.createTransaction({
+                                label,
+                                amount: Number(formData.principalAmount),
+                                type: txType,
+                                userId: user.$id,
+                                accountId: formData.accountId,
+                                categoryId: finalCategoryId,
+                                loans: newLoan.$id
+                            })
+                        }
                         toast.success('Transaction created and balance updated')
                     }
                     toast.success('Loan added successfully')
@@ -245,13 +246,11 @@ const LoanModal = ({ isOpen, onClose, loan, onLoanSaved }) => {
                     <div className="space-y-2">
                         <label className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 dark:text-neutral-500 ml-1">Funding Account</label>
                         <select
-                            required
-                            disabled={!!loan}
                             value={formData.accountId}
                             onChange={(e) => setFormData({ ...formData, accountId: e.target.value })}
                             className="w-full px-4 py-3.5 rounded-2xl bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-700/50 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-neutral-900 dark:text-white transition-all font-black appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            <option value="" disabled className="dark:bg-neutral-900">Select Account</option>
+                            <option value="0" selected className="dark:bg-neutral-900">Select Account</option>
                             {accounts.map(acc => (
                                 <option key={acc.$id} value={acc.$id} className="dark:bg-neutral-900">{acc.accountName} (₹{acc.balance})</option>
                             ))}
