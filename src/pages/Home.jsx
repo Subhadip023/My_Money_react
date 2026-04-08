@@ -38,7 +38,8 @@ export const Home = () => (
                     { title: 'Investment Portfolio', desc: 'Track Mutual Funds, Stocks, and FDs with premium valuation updates.', icon: '🏦' },
                     { title: 'Loan & Debt Tracking', desc: 'Manage mortgages, personal loans, and settlements with ease.', icon: '💰' },
                     { title: 'Monthy Financial Reports', desc: 'Detailed spending breakdowns and automated category analytics.', icon: '📊' },
-                    { title: 'Excel Data Export', desc: 'Professional data reporting for external analysis with one click.', icon: '📋' }
+                    { title: 'Excel Data Export', desc: 'Professional data reporting for external analysis with one click.', icon: '📋' },
+                    { title: 'Global Issue Reporting', desc: 'Report bugs and communicate with admins synchronously anywhere.', icon: '🛠️' }
                 ].map((item, i) => (
                     <div key={i} className="flex gap-5 group">
                         <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center text-xl transition-transform group-hover:scale-110">

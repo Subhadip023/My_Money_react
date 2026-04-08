@@ -48,6 +48,11 @@ export const About = () => {
                         title: 'Advanced Reporting',
                         desc: 'Generate comprehensive monthly financial reports and export your entire history to Excel instantly.',
                         icon: '📋'
+                    },
+                    {
+                        title: 'Global Issue Reporting',
+                        desc: 'Instantly report issues from anywhere on the platform and track real-time resolution updates with administrators.',
+                        icon: '🛠️'
                     }
                 ].map((item, i) => (
                     <div key={i} className="group p-8 rounded-[32px] bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-300 hover:-translate-y-1">
@@ -91,9 +96,19 @@ export const About = () => {
                     </div>
                 </div>
 
-                <p className="text-neutral-400 dark:text-neutral-500 text-xs font-bold uppercase tracking-widest text-center">
+                <p className="text-neutral-400 dark:text-neutral-500 text-xs font-bold uppercase tracking-widest text-center mt-2">
                     Made with passion by Subhadip Chakraborty
                 </p>
+
+                <a
+                    href="mailto:subhadip240420@gamil.com"
+                    className="mt-4 px-6 py-3 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-black text-sm uppercase tracking-widest hover:bg-indigo-100 dark:hover:bg-indigo-500/20 transition-all flex items-center gap-2"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                    </svg>
+                    Contact Me
+                </a>
             </div>
         </div>
     )

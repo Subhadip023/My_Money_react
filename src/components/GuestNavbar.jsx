@@ -12,11 +12,11 @@ const GuestNavbar = () => {
     const isAuthenticated = useSelector((state) => state.auth.isAuthenticated)
     console.log("isAuthenticated", isAuthenticated);
     const navItems = [
-        { name: 'Home', path: '/' , show: true },
-        { name: 'About', path: '/about'  ,show: true},
-        { name: 'Login', path: '/login'  ,show: !isAuthenticated},
-        { name: 'Register', path: '/register'  ,show: !isAuthenticated},
-        { name: 'Dashboard', path: '/dashboard' ,show: isAuthenticated},
+        { name: 'Home', path: '/', show: true },
+        { name: 'Login', path: '/login', show: !isAuthenticated },
+        { name: 'Register', path: '/register', show: !isAuthenticated },
+        { name: 'Dashboard', path: '/dashboard', show: isAuthenticated },
+        { name: 'About', path: '/about', show: true },
     ]
 
     return (
