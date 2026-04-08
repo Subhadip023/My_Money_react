@@ -8,7 +8,6 @@ import FloatingCard from '../components/ui/FlotingCard'
 import { exportTransactionsToExcel } from '../utils/excelExport'
 import toast from 'react-hot-toast'
 import TransactionIcon from '../components/ui/TransactionIcon'
-import jsPDF from 'jspdf'
 
 /**
  * Monthly Report Page
@@ -82,16 +81,16 @@ export default function MonthlyReport() {
                     <h1 className="text-4xl font-black tracking-tight">{monthName} {now.getFullYear()}</h1>
                     <p className="text-neutral-500 dark:text-neutral-400 mt-1">Deep-dive into your financial performance this month.</p>
                 </div>
-                
+
                 <div className="flex flex-wrap items-center gap-3">
-                    <button 
+                    <button
                         onClick={handleExport}
                         className="h-10 px-5 rounded-2xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-[10px] font-black uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2 shadow-xl shadow-neutral-900/10 dark:shadow-white/10"
                     >
                         <span className="text-sm">📄</span>
                         Export Excel
                     </button>
-                    
+
                     <div className="flex bg-neutral-100 dark:bg-neutral-800 p-1 rounded-2xl border border-neutral-200 dark:border-neutral-700 h-10">
                         <button className="px-4 py-1.5 rounded-xl bg-white dark:bg-neutral-700 shadow-sm text-[10px] font-black uppercase tracking-widest">Monthly</button>
                         <button className="px-4 py-1.5 rounded-xl text-neutral-400 text-[10px] font-black uppercase tracking-widest opacity-50 cursor-not-allowed">Yearly</button>
@@ -107,14 +106,14 @@ export default function MonthlyReport() {
                     <div className="text-neutral-500 font-bold uppercase tracking-widest text-[10px] mb-1">Total Income</div>
                     <div className="text-3xl font-black text-white italic">₹{stats.income.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
                 </FloatingCard>
-                
+
                 <FloatingCard className="p-8 rounded-3xl bg-white dark:bg-neutral-800 border-neutral-100 dark:border-neutral-700 shadow-sm relative overflow-hidden group">
-                     <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/5 rounded-bl-full group-hover:scale-110 transition-transform" />
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/5 rounded-bl-full group-hover:scale-110 transition-transform" />
                     <span className="text-2xl mb-4 block">📉</span>
                     <div className="text-neutral-400 font-bold uppercase tracking-widest text-[10px] mb-1">Total Expenses</div>
                     <div className="text-3xl font-black text-neutral-900 dark:text-white italic text-rose-500">₹{stats.expense.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
                 </FloatingCard>
-                
+
                 <FloatingCard className="p-8 rounded-3xl bg-indigo-600 shadow-lg shadow-indigo-600/20 relative overflow-hidden group">
                     <div className="absolute bottom-0 right-0 w-32 h-32 bg-white/10 rounded-tl-full group-hover:scale-110 transition-transform" />
                     <span className="text-2xl mb-4 block underline-offset-4 underline decoration-white/30 text-white">💰</span>
@@ -150,7 +149,7 @@ export default function MonthlyReport() {
 
                 {/* Significant Movements / Top Expenses */}
                 <FloatingCard className="p-8 rounded-[2rem] bg-white dark:bg-neutral-800 border-neutral-100 dark:border-neutral-700 shadow-sm">
-                     <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center justify-between mb-8">
                         <h3 className="text-xl font-black tracking-tighter">Top Transactions</h3>
                         <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest italic">Sorted by Recency</span>
                     </div>
@@ -180,7 +179,7 @@ export default function MonthlyReport() {
                         )}
                         {transactions.length > 6 && (
                             <div className="pt-4 text-center">
-                                <button 
+                                <button
                                     onClick={() => navigate('/transactions')}
                                     className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 hover:text-indigo-500 transition-colors cursor-pointer"
                                 >
