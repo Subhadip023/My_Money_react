@@ -12,6 +12,7 @@ import Footer from '../components/Footer'
 import UserTour from '../components/ui/UserTour'
 import conf from '../config/config'
 import IssueModal from '../components/ui/IssueModal'
+import Button from '../components/shared/Button'
 
 export const MainLayout = () => {
     const dispatch = useDispatch()
@@ -78,14 +79,15 @@ export const MainLayout = () => {
                 {/* Top Header */}
                 <header className="sticky top-0 z-40 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md border-b border-neutral-100 dark:border-neutral-800 px-4 md:px-6 py-3 md:py-4 flex items-center justify-between">
                     {/* Left: Mobile Toggle */}
-                    <button
+                    <Button
+                        variant="ghost"
                         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                        className="p-2.5 rounded-xl bg-neutral-50 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400  hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
+                        className="p-2.5 bg-neutral-50 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 px-2.5 py-2.5 sm:px-2.5 sm:py-2.5"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
                         </svg>
-                    </button>
+                    </Button>
 
                     <div className="hidden md:block">
                         {/* Title or Breadcrumbs could go here */}
@@ -94,16 +96,17 @@ export const MainLayout = () => {
                     {/* Right: User Profile & Actions & Theme Toggle */}
                     <div className="flex items-center gap-3 sm:gap-6">
                         {/* Report Issue Button */}
-                        <button
+                        <Button
+                            variant="ghost"
                             onClick={() => setIsIssueModalOpen(true)}
                             title='Report an Issue'
-                            className="p-2.5 rounded-xl bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-500/20 transition-all active:scale-95 cursor-pointer shadow-sm font-bold flex items-center justify-center gap-2 text-sm"
+                            className="p-2.5 bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-500/20 px-2.5 py-2.5 sm:px-2.5 sm:py-2.5 text-sm"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                             </svg>
                             <span className="hidden sm:inline">Report Issue</span>
-                        </button>
+                        </Button>
 
                         <div className="flex items-center gap-4 relative" ref={dropdownRef}>
                             <div className="text-right hidden sm:block">
@@ -114,9 +117,10 @@ export const MainLayout = () => {
                                     {user?.email || 'Premium Member'}
                                 </p>
                             </div>
-                            <button 
+                            <Button
+                                variant="ghost"
                                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                                className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-500 to-violet-500 p-[2px] shadow-lg shadow-indigo-500/20 active:scale-95 transition-transform"
+                                className="w-10 h-10 rounded-2xl p-0 sm:px-0 sm:py-0 px-0 py-0 hover:bg-transparent shadow-none w-10 h-10 bg-gradient-to-tr from-indigo-500 to-violet-500 p-[2px] shadow-lg shadow-indigo-500/20"
                             >
                                 {user?.prefs?.avatarId ? (
                                     <img src={`https://fra.cloud.appwrite.io/v1/storage/buckets/${conf.appwriteBucketID}/files/${user.prefs.avatarId}/view?project=${conf.appwriteProjectId}`} alt="Profile" className="w-full h-full rounded-[14px] object-cover pointer-events-none" />
@@ -125,7 +129,7 @@ export const MainLayout = () => {
                                         {user?.name?.charAt(0).toUpperCase() || 'U'}
                                     </div>
                                 )}
-                            </button>
+                            </Button>
 
                             {/* Dropdown Menu */}
                             {isDropdownOpen && (
@@ -144,18 +148,19 @@ export const MainLayout = () => {
                                         </Link>
                                     </div>
                                     <div className="p-2 border-t border-neutral-100 dark:border-neutral-700/50">
-                                        <button 
+                                        <Button
+                                            variant="ghost"
                                             onClick={() => {
                                                 setIsDropdownOpen(false)
                                                 handleLogout()
                                             }}
-                                            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors"
+                                            className="w-full flex items-center gap-3 px-4 py-3 sm:px-4 sm:py-3 text-sm text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 justify-start"
                                         >
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5">
                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
                                             </svg>
                                             Logout
-                                        </button>
+                                        </Button>
                                     </div>
                                 </div>
                             )}

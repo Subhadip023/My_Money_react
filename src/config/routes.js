@@ -13,17 +13,20 @@ import Issues from '../pages/Issues'
 import AdminIssues from '../pages/AdminIssues'
 import IssueDetails from '../pages/IssueDetails'
 
-/**
- * Route Configuration:
- * Defines which routes are protected and which labels are required.
- */
+/*
+
+'Dashboard': '📊', 'Accounts': '💳', 'Categories': '🏷️', 'Transactions': '📝', 'Investments': '🏦', 'Loans': '💰', 'Settings': '⚙️' };
+
+*/
 export const dashboardRoutes = [
     {
+        icon: '📊',
         path: 'dashboard',
         element: Dashboard,
         name: 'Dashboard'
     },
     {
+        icon: '💳',
         path: 'accounts',
         element: Accounts,
         name: 'Accounts'
@@ -34,6 +37,7 @@ export const dashboardRoutes = [
         name: 'Account Details'
     },
     {
+        icon: '🏷️',
         path: 'categories',
         element: Categories,
         name: 'Categories'
@@ -44,48 +48,56 @@ export const dashboardRoutes = [
         name: 'Category Details'
     },
     {
+        icon: '📝',
         path: 'transactions',
         element: Transactions,
         name: 'Transactions',
         requiredLabel: 'premium'
     },
     {
+        icon: '🏦',
         path: 'investments',
         element: Investments,
         name: 'Investments',
         requiredLabel: 'premium'
     },
     {
+        icon: '💰',
         path: 'loans',
         element: Loans,
         name: 'Loans',
         requiredLabel: 'premium'
     },
     {
+        icon: '📋',
         path: 'monthly-report',
         element: MonthlyReport,
         name: 'Monthly Report',
         requiredLabel: 'premium'
     },
     {
+        icon: '⚙️',
         path: 'settings',
         element: Settings,
         name: 'Settings'
     },
     {
+        icon: '🚨',
         path: 'issues',
         element: Issues,
         name: 'Issues'
     },
     {
+
         path: 'issues/:id',
         element: IssueDetails,
         name: 'Issue Details'
     },
     {
+        icon: '🛡️',
         path: 'complaints',
         element: AdminIssues,
-        name: 'Admin Issues',
+        name: 'User Issues',
         requiredLabel: 'admin'
     }
 ];

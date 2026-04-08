@@ -5,6 +5,7 @@ import { toast } from 'react-hot-toast';
 import issueService from '../appwrite/issue';
 import storageService from '../appwrite/storage';
 import { setLoading } from '../redux/uiSlice';
+import Button from '../components/shared/Button';
 
 const IssueDetails = () => {
     const { id } = useParams();
@@ -83,11 +84,11 @@ const IssueDetails = () => {
             <div className='flex flex-col md:flex-row md:items-center justify-between gap-6'>
                 <div className="space-y-2">
                     <div className="flex items-center gap-4">
-                        <button onClick={() => navigate(-1)} className="p-2 rounded-xl bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-neutral-600 dark:text-neutral-300 transition-colors">
+                        <Button variant="secondary" onClick={() => navigate(-1)} className="p-2">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
                             </svg>
-                        </button>
+                        </Button>
                         <h1 className='text-4xl font-black tracking-tight'>Issue Details</h1>
                     </div>
                 </div>
@@ -155,13 +156,13 @@ const IssueDetails = () => {
                                 value={newComment}
                                 onChange={(e) => setNewComment(e.target.value)}
                             />
-                            <button
+                            <Button
                                 type="submit"
                                 disabled={isSubmitting || !newComment.trim()}
-                                className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-sm rounded-2xl transition-all shadow-xl shadow-indigo-600/20 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="px-6 py-3 text-sm shadow-xl"
                             >
                                 Send
-                            </button>
+                            </Button>
                         </form>
                     </div>
                 </div>

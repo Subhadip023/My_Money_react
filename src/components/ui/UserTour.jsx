@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { cn } from '../../utils';
+import Button from '../shared/Button';
 
 const STEPS = [
     {
@@ -147,12 +148,13 @@ export default function UserTour() {
                         <span className="text-xs font-black uppercase tracking-widest text-indigo-500">
                             Step {currentStep + 1} of {STEPS.length}
                         </span>
-                        <button
+                        <Button
+                            variant="ghost"
                             onClick={handleSkip}
-                            className="text-xs font-bold text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition-colors"
+                            className="text-xs text-neutral-400 px-0 py-0 sm:px-0 sm:py-0 hover:text-neutral-600 dark:hover:text-neutral-200 hover:bg-transparent"
                         >
                             Skip Tour
-                        </button>
+                        </Button>
                     </div>
 
                     <h3 className="text-xl font-black mb-2 text-neutral-900 dark:text-white">
@@ -174,12 +176,12 @@ export default function UserTour() {
                                 />
                             ))}
                         </div>
-                        <button
+                        <Button
                             onClick={handleNext}
-                            className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm transition-all active:scale-95 shadow-lg shadow-indigo-600/20"
+                            className="px-6 py-2.5 sm:px-6 sm:py-2.5 text-sm"
                         >
                             {currentStep === STEPS.length - 1 ? "Finish" : "Next ✨"}
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </div>

@@ -3,23 +3,11 @@ import { Link, useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { cn } from '../utils'
 import { dashboardRoutes } from '../config/routes'
+import Button from './shared/Button'
 
 const Sidebar = ({ isOpen, onClose }) => {
     const location = useLocation()
     const user = useSelector((state) => state.auth.user)
-
-    const icons = {
-        'dashboard': '📊',
-        'accounts': '💳',
-        'categories': '🏷️',
-        'transactions': '📝',
-        'investments': '🏦',
-        'loans': '💰',
-        'monthly-report': '📋',
-        'settings': '⚙️',
-        'issues': '🚨',
-        'complaints': '🛡️'
-    }
 
     const navItems = dashboardRoutes
         .filter(route => !route.path.includes(':')) // Hide detail routes from sidebar
@@ -30,7 +18,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         .map(route => ({
             name: route.name,
             path: `/${route.path}`,
-            icon: icons[route.path.split('/')[0]] || '📍'
+            icon: route.icon || '📍'
         }));
 
     return (
@@ -62,14 +50,15 @@ const Sidebar = ({ isOpen, onClose }) => {
                         </Link>
 
                         {/* Mobile Close Button */}
-                        <button
+                        <Button
+                            variant="secondary"
                             onClick={onClose}
-                            className="p-2 rounded-xl bg-neutral-100 dark:bg-neutral-700 md:hidden"
+                            className="p-2 md:hidden"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                             </svg>
-                        </button>
+                        </Button>
                     </div>
                     <p className="hidden lg:block text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-400 mt-2 ml-1">
                         Financial Mastery

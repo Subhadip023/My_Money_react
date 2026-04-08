@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { cn } from '../utils'
+import Button from '../components/shared/Button'
 
 const NotFound = () => {
     return (
@@ -32,12 +33,13 @@ const NotFound = () => {
                     >
                         Back to Home
                     </Link>
-                    <button
+                    <Button
+                        variant="outline"
                         onClick={() => window.history.back()}
-                        className="px-8 py-4 rounded-2xl bg-white dark:bg-neutral-800 border-2 border-neutral-100 dark:border-neutral-700 font-black text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all active:scale-95 shadow-sm"
+                        className="px-8 py-4 bg-white dark:bg-neutral-800 border-2"
                     >
                         Go Back
-                    </button>
+                    </Button>
                 </div>
             </div>
 

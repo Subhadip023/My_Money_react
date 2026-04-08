@@ -9,6 +9,7 @@ import investmentService from '../appwrite/investment'
 import PieChart from '../components/PieChart'
 import FloatingCard from '../components/ui/FlotingCard'
 import { Link } from 'react-router-dom'
+import Button from '../components/shared/Button'
 export default function Dashboard() {
     const [totalBalance, setTotalBalance] = useState(0)
     const [monthlyExpences, setMonthlyExpences] = useState(0)
@@ -111,13 +112,13 @@ export default function Dashboard() {
                 </div>
                 <div className="flex gap-4">
                   
-                    <button
+                    <Button
                         id="tour-add-transaction"
                         onClick={() => setIsModalOpen(true)}
-                        className="px-6 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold transition-all active:scale-95 shadow-lg shadow-indigo-600/20"
+                        className=""
                     >
                         Add Transaction
-                    </button>
+                    </Button>
                 </div>
             </div>
 

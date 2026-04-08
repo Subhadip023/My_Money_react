@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { toggleTheme } from '../redux/themeSlice'
 import { cn } from '../utils'
+import Button from './shared/Button'
 
 const GuestNavbar = () => {
     const location = useLocation()
@@ -55,9 +56,10 @@ const GuestNavbar = () => {
                             ))}
                         </div>
 
-                        <button
+                        <Button
+                            variant="secondary"
                             onClick={() => dispatch(toggleTheme())}
-                            className="p-2.5 rounded-xl bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 text-neutral-600 dark:text-neutral-200 transition-all active:scale-95 shadow-inner cursor-pointer"
+                            className="p-2.5 shadow-inner"
                         >
                             {darkMode ? (
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
@@ -68,25 +70,27 @@ const GuestNavbar = () => {
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
                                 </svg>
                             )}
-                        </button>
+                        </Button>
                     </div>
 
                     {/* Mobile Toggle & Theme Toggle */}
                     <div className="flex md:hidden items-center gap-2">
-                        <button
+                        <Button
+                            variant="secondary"
                             onClick={() => dispatch(toggleTheme())}
-                            className="p-2.5 rounded-xl bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-200"
+                            className="p-2.5"
                         >
                             {darkMode ? '🌙' : '☀️'}
-                        </button>
-                        <button
+                        </Button>
+                        <Button
+                            variant="ghost"
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
-                            className="p-2.5 rounded-xl bg-neutral-50 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400"
+                            className="p-2.5 bg-neutral-50 dark:bg-neutral-800"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
                                 <path strokeLinecap="round" strokeLinejoin="round" d={isMenuOpen ? "M6 18L18 6M6 6l12 12" : "M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"} />
                             </svg>
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </div>

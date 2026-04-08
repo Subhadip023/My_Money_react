@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from '../../utils'
+import Button from '../shared/Button'
 
 const Modal = ({ isOpen, onClose, title, children }) => {
     useEffect(() => {
@@ -34,14 +35,15 @@ const Modal = ({ isOpen, onClose, title, children }) => {
                     <h3 className="text-xl font-black tracking-tight text-neutral-900 dark:text-white">
                         {title}
                     </h3>
-                    <button
+                    <Button
+                        variant="ghost"
                         onClick={onClose}
-                        className="p-2 rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-500 transition-colors"
+                        className="p-2 sm:px-2 sm:py-2 px-2 py-2 text-neutral-500 rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-700"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                         </svg>
-                    </button>
+                    </Button>
                 </div>
 
                 {/* Body */}

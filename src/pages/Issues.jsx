@@ -6,6 +6,7 @@ import issueService from '../appwrite/issue';
 import storageService from '../appwrite/storage';
 import { setLoading } from '../redux/uiSlice';
 import IssueModal from '../components/ui/IssueModal';
+import Button from '../components/shared/Button';
 
 const Issues = () => {
     const user = useSelector((state) => state.auth.user);
@@ -65,15 +66,15 @@ const Issues = () => {
                     </p>
                 </div>
                 <div className='flex flex-col gap-2 items-end justify-center'>
-                    <button
+                    <Button
                         onClick={() => setIsModalOpen(true)}
-                        className='px-8 py-4 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-lg transition-all active:scale-95 shadow-xl shadow-indigo-600/20 flex items-center gap-2 cursor-pointer'
+                        className='text-lg'
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-5 h-5">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                         </svg>
                         Report an Issue
-                    </button>
+                    </Button>
                 </div>
             </div>
 

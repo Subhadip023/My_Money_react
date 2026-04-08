@@ -6,6 +6,7 @@ import toast from 'react-hot-toast'
 import Modal from './Modal'
 import { cn } from '../../utils'
 import transactionService from '../../appwrite/transaction'
+import Button from '../shared/Button'
 
 const AddAmountModal = ({ isOpen, onClose, account, onAmountAdded }) => {
     const { register, handleSubmit, reset, formState: { errors } } = useForm()
@@ -86,20 +87,20 @@ const AddAmountModal = ({ isOpen, onClose, account, onAmountAdded }) => {
                 </div>
 
                 <div className="pt-4 flex gap-4">
-                    <button
-                        type="button"
+                    <Button
+                        variant="secondary"
                         onClick={onClose}
-                        className="flex-1 py-4 rounded-2xl bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 font-bold transition-all hover:bg-neutral-200"
+                        className="flex-1 font-bold"
                     >
                         Cancel
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         type="submit"
-                        disabled={loading}
-                        className="flex-1 py-4 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-lg transition-all active:scale-[0.98] shadow-xl shadow-indigo-600/20 disabled:opacity-50"
+                        loading={loading}
+                        className="flex-1 text-lg"
                     >
-                        {loading ? 'Adding...' : 'Add Amount'}
-                    </button>
+                        Add Amount
+                    </Button>
                 </div>
             </form>
         </Modal>

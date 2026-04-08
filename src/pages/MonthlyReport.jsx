@@ -8,6 +8,7 @@ import FloatingCard from '../components/ui/FlotingCard'
 import { exportTransactionsToExcel } from '../utils/excelExport'
 import toast from 'react-hot-toast'
 import TransactionIcon from '../components/ui/TransactionIcon'
+import Button from '../components/shared/Button'
 
 /**
  * Monthly Report Page
@@ -83,17 +84,17 @@ export default function MonthlyReport() {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3">
-                    <button
+                    <Button
                         onClick={handleExport}
-                        className="h-10 px-5 rounded-2xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-[10px] font-black uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2 shadow-xl shadow-neutral-900/10 dark:shadow-white/10"
+                        className="h-10 px-5 rounded-2xl bg-neutral-900 hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-200 text-white dark:text-neutral-900 border-none sm:px-5 sm:py-0 px-5 py-0 text-[10px] scale-100 flex items-center gap-2 shadow-xl shadow-neutral-900/10 dark:shadow-white/10"
                     >
                         <span className="text-sm">📄</span>
                         Export Excel
-                    </button>
+                    </Button>
 
                     <div className="flex bg-neutral-100 dark:bg-neutral-800 p-1 rounded-2xl border border-neutral-200 dark:border-neutral-700 h-10">
-                        <button className="px-4 py-1.5 rounded-xl bg-white dark:bg-neutral-700 shadow-sm text-[10px] font-black uppercase tracking-widest">Monthly</button>
-                        <button className="px-4 py-1.5 rounded-xl text-neutral-400 text-[10px] font-black uppercase tracking-widest opacity-50 cursor-not-allowed">Yearly</button>
+                        <Button variant="ghost" className="px-4 py-1.5 sm:px-4 sm:py-1.5 rounded-xl bg-white dark:bg-neutral-700 shadow-sm text-[10px] hover:bg-white dark:hover:bg-neutral-700 hover:text-neutral-600 dark:hover:text-neutral-300">Monthly</Button>
+                        <Button variant="ghost" className="px-4 py-1.5 sm:px-4 sm:py-1.5 rounded-xl text-neutral-400 text-[10px] hover:bg-transparent opacity-50 cursor-not-allowed hidden">Yearly</Button>
                     </div>
                 </div>
             </header>
@@ -179,12 +180,13 @@ export default function MonthlyReport() {
                         )}
                         {transactions.length > 6 && (
                             <div className="pt-4 text-center">
-                                <button
+                                <Button
+                                    variant="ghost"
                                     onClick={() => navigate('/transactions')}
-                                    className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 hover:text-indigo-500 transition-colors cursor-pointer"
+                                    className="text-[10px] text-neutral-400 hover:text-indigo-500 hover:bg-transparent px-0 py-0 sm:px-0 sm:py-0"
                                 >
                                     Display All Transactions
-                                </button>
+                                </Button>
                             </div>
                         )}
                     </div>
