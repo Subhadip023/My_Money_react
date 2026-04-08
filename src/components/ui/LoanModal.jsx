@@ -38,7 +38,7 @@ const LoanModal = ({ isOpen, onClose, loan, onLoanSaved }) => {
                 ])
                 setAccounts(accRes.documents)
                 setCategories(catRes.documents)
-                
+
                 if (accRes.documents.length > 0 && !formData.accountId) {
                     setFormData(prev => ({ ...prev, accountId: accRes.documents[0].$id }))
                 }
@@ -111,29 +111,29 @@ const LoanModal = ({ isOpen, onClose, loan, onLoanSaved }) => {
                 await loanService.updateLoan(loan.$id, data)
                 toast.success('Loan updated successfully')
             } else {
-                    const newLoan = await loanService.createLoan(data)
-                    
-                    if (formData.trackTransaction && formData.accountId!=0) {
-                        const txType = formData.loanType === 'given' ? 'expense' : 'income'
-                        const label = `${formData.loanType === 'given' ? 'Loan Given' : 'Loan Taken'}: ${formData.loanName}`
-                        
-                        // Find a category related to loans if possible, otherwise use null
-                        const loanCategory = categories.find(c => c.name.toLowerCase().includes('loan'))
-                        const finalCategoryId = formData.categoryId || (loanCategory ? loanCategory.$id : null)
-                        if (accountId!=0) {
-                            await transactionService.createTransaction({
-                                label,
-                                amount: Number(formData.principalAmount),
-                                type: txType,
-                                userId: user.$id,
-                                accountId: formData.accountId,
-                                categoryId: finalCategoryId,
-                                loans: newLoan.$id
-                            })
-                        }
-                        toast.success('Transaction created and balance updated')
+                const newLoan = await loanService.createLoan(data)
+
+                if (formData.trackTransaction && formData.accountId != 0) {
+                    const txType = formData.loanType === 'given' ? 'expense' : 'income'
+                    const label = `${formData.loanType === 'given' ? 'Loan Given' : 'Loan Taken'}: ${formData.loanName}`
+
+                    // Find a category related to loans if possible, otherwise use null
+                    const loanCategory = categories.find(c => c.name.toLowerCase().includes('loan'))
+                    const finalCategoryId = formData.categoryId || (loanCategory ? loanCategory.$id : null)
+                    if (formData.accountId != 0) {
+                        await transactionService.createTransaction({
+                            label,
+                            amount: Number(formData.principalAmount),
+                            type: txType,
+                            userId: user.$id,
+                            accountId: formData.accountId,
+                            categoryId: finalCategoryId,
+                            loans: newLoan.$id
+                        })
                     }
-                    toast.success('Loan added successfully')
+                    toast.success('Transaction created and balance updated')
+                }
+                toast.success('Loan added successfully')
             }
             onLoanSaved()
             onClose()

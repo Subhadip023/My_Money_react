@@ -8,7 +8,7 @@ import GuestLayout from './layouts/GuestLayout'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import NotFound from './pages/NotFound'
-import { useDispatch ,useSelector} from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
 import authService from './appwrite/auth'
 import { setUser, logout } from './redux/authSlice'
@@ -19,7 +19,7 @@ import GuestRoutes from './components/GuestRoutes'
 import { Toaster } from 'react-hot-toast'
 import { initializeTheme } from './redux/themeSlice'
 import MvpGuard from './components/MvpGuard'
-
+import Dashboard from './pages/Dashboard'
 function App() {
   const dispatch = useDispatch()
 
@@ -73,7 +73,7 @@ function App() {
         {/* Everything inside GuestLayout by default */}
         <Route element={isAuthenticated ? <MainLayout /> : <GuestLayout />}>
           {/* Publicly Shared Pages */}
-          <Route index element={ <Home />} />
+          <Route index element={isAuthenticated ? <Dashboard /> : <Home />} />
           <Route path="about" element={<About />} />
 
           {/* Authenticated Guests Only (Login/Register) */}
