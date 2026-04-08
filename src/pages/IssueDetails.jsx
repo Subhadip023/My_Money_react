@@ -120,7 +120,7 @@ const IssueDetails = () => {
 
                 {/* Comments Section */}
                 <div className="lg:col-span-2 space-y-6 ">
-                    <div className="rounded-3xl border border-neutral-100 dark:border-neutral-700/50 bg-white/50 dark:bg-neutral-800/30 backdrop-blur-sm shadow-sm p-8 flex flex-col h-[calc(80vh-12rem)] min-h-[350px]">
+                    <div className="rounded-3xl border border-neutral-100 dark:border-neutral-700/50 bg-white/50 dark:bg-neutral-800/30 backdrop-blur-sm shadow-sm p-8 flex flex-col h-[calc(80vh-12rem)] min-h-[360px]">
                         <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-6 tracking-tight">Communication</h3>
 
                         <div className="flex-1 overflow-y-auto space-y-6 mb-6 pr-2">
