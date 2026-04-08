@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import FloatingCard from '../components/ui/FlotingCard';
 import Button from '../components/shared/Button';
 import { cn } from '../utils';
+import TransactionIcon from '../components/ui/TransactionIcon';
 
 export default function CategoryDetails() {
     const { id } = useParams();
@@ -114,9 +115,7 @@ export default function CategoryDetails() {
                     {transactions.map((tx) => (
                         <div key={tx.$id} className="flex items-center justify-between p-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-700 transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800">
                             <div className="flex items-center gap-4">
-                                <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl shadow-sm ${tx.type === 'income' ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400' : 'bg-rose-100 text-rose-600 dark:bg-rose-500/20 dark:text-rose-400'}`}>
-                                    {tx.type === 'income' ? '↓' : '↑'}
-                                </div>
+                                <TransactionIcon type={tx.type} className="w-12 h-12 shadow-sm" />
                                 <div>
                                     <p className="font-bold truncate max-w-[150px] sm:max-w-[200px]">{tx.label}</p>
                                     <p className="text-sm text-neutral-500 dark:text-neutral-400">

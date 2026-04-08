@@ -7,6 +7,8 @@ import PieChart from '../components/PieChart'
 import FloatingCard from '../components/ui/FlotingCard'
 import { exportTransactionsToExcel } from '../utils/excelExport'
 import toast from 'react-hot-toast'
+import TransactionIcon from '../components/ui/TransactionIcon'
+import jsPDF from 'jspdf'
 
 /**
  * Monthly Report Page
@@ -156,9 +158,7 @@ export default function MonthlyReport() {
                         {transactions.slice(0, 6).map((tx, i) => (
                             <div key={tx.$id} className="group flex items-center justify-between p-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 hover:border-indigo-500/50 hover:bg-white dark:hover:bg-neutral-700/50 transition-all">
                                 <div className="flex items-center gap-4">
-                                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl shadow-sm transition-transform group-hover:scale-110 ${tx.type === 'income' ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400' : 'bg-rose-100 text-rose-600 dark:bg-rose-500/20 dark:text-rose-400'}`}>
-                                        {tx.type === 'income' ? '↓' : '↑'}
-                                    </div>
+                                    <TransactionIcon type={tx.type} className="w-12 h-12 shadow-sm transition-transform group-hover:scale-110" />
                                     <div>
                                         <p className="font-bold text-sm dark:text-white capitalize">{tx.label}</p>
                                         <div className="flex items-center gap-2 mt-0.5">

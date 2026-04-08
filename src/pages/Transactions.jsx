@@ -4,6 +4,7 @@ import transactionService from '../appwrite/transaction'
 import { useSelector } from 'react-redux'
 import toast from 'react-hot-toast'
 import TransactionModal from '../components/ui/TransactionModal'
+import TransactionIcon from '../components/ui/TransactionIcon'
 import Button from '../components/shared/Button'
 import { exportTransactionsToExcel } from '../utils/excelExport'
 export default function Transactions() {
@@ -102,12 +103,7 @@ export default function Transactions() {
                             <tr key={tx.$id} className='hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors group'>
                                 <td className='px-8 py-6'>
                                     <div className="flex items-center gap-4">
-                                        <div className={cn(
-                                            "w-10 h-10 rounded-xl flex items-center justify-center text-xl",
-                                            tx.type === 'income' ? "bg-emerald-100 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400" : "bg-rose-100 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400"
-                                        )}>
-                                            {tx.type === 'income' ? '↙' : '↗'}
-                                        </div>
+                                        <TransactionIcon type={tx.type} className="w-10 h-10" />
                                         <div className='flex flex-col'>
                                             <span className="font-bold text-neutral-900 dark:text-white">{tx.label}</span>
                                             <span className='text-xs text-neutral-400 font-medium'>{tx.accounts?.accountName}</span>
