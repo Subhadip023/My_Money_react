@@ -32,7 +32,6 @@ const Sidebar = ({ isOpen, onClose }) => {
         }
     }
 
-    // Map icons to dashboard routes
     const icons = {
         'dashboard': '📊',
         'accounts': '💳',
@@ -41,7 +40,9 @@ const Sidebar = ({ isOpen, onClose }) => {
         'investments': '🏦',
         'loans': '💰',
         'monthly-report': '📋',
-        'settings': '⚙️'
+        'settings': '⚙️',
+        'issues': '🚨',
+        'complaints': '🛡️'
     }
 
     const navItems = dashboardRoutes

@@ -7,11 +7,13 @@ import { cn } from '../utils'
 import Footer from '../components/Footer'
 import UserTour from '../components/ui/UserTour'
 import conf from '../config/config'
+import IssueModal from '../components/ui/IssueModal'
 
 export const MainLayout = () => {
     const dispatch = useDispatch()
     const user = useSelector((state) => state.auth.user)
     const [isSidebarOpen, setIsSidebarOpen] = useState(() => window.innerWidth >= 768)
+    const [isIssueModalOpen, setIsIssueModalOpen] = useState(false)
     const darkMode = useSelector((state) => state.theme.darkMode)
 
     useEffect(() => {
@@ -57,21 +59,16 @@ export const MainLayout = () => {
 
                     {/* Right: User Profile & Actions & Theme Toggle */}
                     <div className="flex items-center gap-3 sm:gap-6">
-                        {/* Theme Toggle */}
+                        {/* Report Issue Button */}
                         <button
-                            onClick={() => dispatch(toggleTheme())}
-                            title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-                            className="p-2.5 rounded-xl bg-neutral-50 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all active:scale-95 cursor-pointer border border-neutral-100 dark:border-neutral-700 shadow-sm"
+                            onClick={() => setIsIssueModalOpen(true)}
+                            title='Report an Issue'
+                            className="p-2.5 rounded-xl bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-500/20 transition-all active:scale-95 cursor-pointer shadow-sm font-bold flex items-center justify-center gap-2 text-sm"
                         >
-                            {darkMode ? (
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
-                                </svg>
-                            ) : (
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
-                                </svg>
-                            )}
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                            <span className="hidden sm:inline">Report Issue</span>
                         </button>
 
                         <div className="flex items-center gap-4">
@@ -101,6 +98,16 @@ export const MainLayout = () => {
                 </main>
                 <Footer />
             </div>
+
+            <IssueModal
+                isOpen={isIssueModalOpen}
+                onClose={() => setIsIssueModalOpen(false)}
+                onIssueSaved={() => {
+                    // Optional: Dispatch an event or action if needed globally,
+                    // but for now, the toast handles the user feedback globally.
+                    window.dispatchEvent(new Event('issue_saved_globally'));
+                }}
+            />
         </div>
     )
 }

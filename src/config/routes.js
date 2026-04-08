@@ -9,6 +9,9 @@ import Investments from '../pages/Investments'
 import Loans from '../pages/Loans'
 import MonthlyReport from '../pages/MonthlyReport'
 import Settings from '../pages/Settings'
+import Issues from '../pages/Issues'
+import AdminIssues from '../pages/AdminIssues'
+import IssueDetails from '../pages/IssueDetails'
 
 /**
  * Route Configuration:
@@ -68,5 +71,21 @@ export const dashboardRoutes = [
         path: 'settings',
         element: Settings,
         name: 'Settings'
+    },
+    {
+        path: 'issues',
+        element: Issues,
+        name: 'Issues'
+    },
+    {
+        path: 'issues/:id',
+        element: IssueDetails,
+        name: 'Issue Details'
+    },
+    {
+        path: 'complaints',
+        element: AdminIssues,
+        name: 'Admin Issues',
+        requiredLabel: 'admin'
     }
 ];

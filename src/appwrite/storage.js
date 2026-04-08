@@ -39,11 +39,9 @@ export class StorageService {
     }
 
     getFilePreview(fileId) {
+
         try {
-            return this.storage.getFilePreview(
-                conf.appwriteBucketID,
-                fileId
-            );
+            return `https://fra.cloud.appwrite.io/v1/storage/buckets/${conf.appwriteBucketID}/files/${fileId}/view?project=${conf.appwriteProjectId}`;
         } catch (error) {
             console.log("Appwrite service :: getFilePreview :: error", error);
             return null;
