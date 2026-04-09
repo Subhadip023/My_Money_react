@@ -56,8 +56,8 @@ export default function Investments() {
     const getTypeColor = (type) => {
         switch(type) {
             case 'mf': return 'bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400'
-            case 'Stock': return 'bg-indigo-100 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-400'
-            case 'FD': return 'bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400'
+            case 'stock': return 'bg-indigo-100 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-400'
+            case 'fd': return 'bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400'
             default: return 'bg-neutral-100 text-neutral-600 dark:bg-neutral-500/20 dark:text-neutral-400'
         }
     }
@@ -126,11 +126,11 @@ export default function Investments() {
                                     <td className='px-8 py-6'>
                                         <div className="flex items-center gap-4">
                                             <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-black ${getTypeColor(inv.investmentType)}`}>
-                                                {inv.investmentType.slice(0, 2)}
+                                                {(inv.investmentType || '??').slice(0, 2).toUpperCase()}
                                             </div>
                                             <div>
                                                 <div className="font-bold text-neutral-900 dark:text-white">{inv.investmentName}</div>
-                                                <div className="text-xs font-medium text-neutral-500 tracking-wider">Avg Price: ₹{inv.avgBuyPrice?.toLocaleString('en-IN')}</div>
+                                                <div className="text-xs font-medium text-neutral-500 tracking-wider">Avg Price: ₹{inv.avgBuyPrice?.toLocaleString('en-IN') || '0.00'}</div>
                                             </div>
                                         </div>
                                     </td>
