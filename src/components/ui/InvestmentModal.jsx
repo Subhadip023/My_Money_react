@@ -28,10 +28,7 @@ const InvestmentModal = ({ isOpen, onClose, investment, onInvestmentSaved }) => 
             toast.error("Failed to load accounts")
         }
     }
-
     const accountOptions = accounts.map(acc => ({ label: acc.accountName, value: acc.$id }))
-
-
     useEffect(() => {
         if (isOpen) {
             if (investment) {
