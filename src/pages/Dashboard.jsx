@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setLoading } from '../redux/uiSlice'
 import accountService from '../appwrite/account'
 import TransactionModal from '../components/ui/TransactionModal'
-import TransactionIcon from '../components/ui/TransactionIcon'
+import TransactionTable from '../components/ui/TransactionTable'
 import transactionService from '../appwrite/transaction'
 import investmentService from '../appwrite/investment'
 import PieChart from '../components/PieChart'
@@ -156,31 +156,17 @@ export default function Dashboard() {
                         {/* Chat that show the money in account */}
                         <PieChart data={pieChartData} title="Account Balances" showTotal={true} />
                     </FloatingCard>
-                    <FloatingCard className="p-6 md:p-8 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 shadow-sm  relative group">
+                    <FloatingCard className="p-6 md:p-8 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 shadow-sm relative group overflow-hidden">
                         <div className="flex items-center justify-between mb-6">
                             <h3 className="text-xl font-black">Recent Transactions</h3>
+                            <Link to="/transactions" className="text-sm font-bold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400">View All →</Link>
                         </div>
-                        <div className="space-y-4">
-                            {recentTransactions.map((tx) => (
-                                <div key={tx.$id} className="flex items-center justify-between p-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-700 transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800">
-                                    <div className="flex items-center gap-4">
-                                        <TransactionIcon type={tx.type} className="w-12 h-12" />
-                                        <div>
-                                            <p className="font-bold truncate max-w-[150px] sm:max-w-[200px]">{tx.label}</p>
-                                            <p className="text-sm text-neutral-500 dark:text-neutral-400">{new Date(tx.$createdAt).toLocaleDateString('en-GB')}</p>
-                                        </div>
-                                    </div>
-                                    <div className={`font-black ${tx.type === 'income' ? 'text-emerald-500' : 'text-rose-500'}`}>
-                                        {tx.type === 'income' ? '+' : '-'}₹{tx.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                                    </div>
-                                </div>
-                            ))}
-                            {recentTransactions.length === 0 && (
-                                <div className="text-center text-neutral-500 dark:text-neutral-400 py-8 font-medium">
-                                    No recent transactions
-                                </div>
-                            )}
-                        </div>
+                        <TransactionTable 
+                            transactions={recentTransactions}
+                            showActions={false}
+                            showAccount={true}
+                            showCategory={false}
+                        />
                     </FloatingCard>
                 
             </div>

@@ -7,7 +7,7 @@ import PieChart from '../components/PieChart'
 import FloatingCard from '../components/ui/FlotingCard'
 import { exportTransactionsToExcel } from '../utils/excelExport'
 import toast from 'react-hot-toast'
-import TransactionIcon from '../components/ui/TransactionIcon'
+import TransactionTable from '../components/ui/TransactionTable'
 import Button from '../components/shared/Button'
 
 /**
@@ -149,47 +149,27 @@ export default function MonthlyReport() {
                 </FloatingCard>
 
                 {/* Significant Movements / Top Expenses */}
-                <FloatingCard className="p-8 rounded-[2rem] bg-white dark:bg-neutral-800 border-neutral-100 dark:border-neutral-700 shadow-sm">
+                <FloatingCard className="p-8 rounded-[2rem] bg-white dark:bg-neutral-800 border-neutral-100 dark:border-neutral-700 shadow-sm overflow-hidden">
                     <div className="flex items-center justify-between mb-8">
                         <h3 className="text-xl font-black tracking-tighter">Top Transactions</h3>
                         <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest italic">Sorted by Recency</span>
                     </div>
-                    <div className="space-y-4">
-                        {transactions.slice(0, 6).map((tx, i) => (
-                            <div key={tx.$id} className="group flex items-center justify-between p-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 hover:border-indigo-500/50 hover:bg-white dark:hover:bg-neutral-700/50 transition-all">
-                                <div className="flex items-center gap-4">
-                                    <TransactionIcon type={tx.type} className="w-12 h-12 shadow-sm transition-transform group-hover:scale-110" />
-                                    <div>
-                                        <p className="font-bold text-sm dark:text-white capitalize">{tx.label}</p>
-                                        <div className="flex items-center gap-2 mt-0.5">
-                                            <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest">{tx.categories?.name || 'General'}</span>
-                                            <span className="w-1 h-1 rounded-full bg-neutral-300 dark:bg-neutral-600" />
-                                            <span className="text-[10px] text-neutral-400 font-medium italic">{new Date(tx.$createdAt).toLocaleDateString()}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <span className={`font-black italic text-lg ${tx.type === 'income' ? 'text-emerald-500' : 'text-rose-500'}`}>
-                                    {tx.type === 'income' ? '+' : '-'}₹{tx.amount.toLocaleString('en-IN')}
-                                </span>
-                            </div>
-                        ))}
-                        {transactions.length === 0 && (
-                            <div className="text-center py-20 text-neutral-400 italic">
-                                Nothing to see here yet...
-                            </div>
-                        )}
-                        {transactions.length > 6 && (
-                            <div className="pt-4 text-center">
-                                <Button
-                                    variant="ghost"
-                                    onClick={() => navigate('/transactions')}
-                                    className="text-[10px] text-neutral-400 hover:text-indigo-500 hover:bg-transparent px-0 py-0 sm:px-0 sm:py-0"
-                                >
-                                    Display All Transactions
-                                </Button>
-                            </div>
-                        )}
-                    </div>
+                    <TransactionTable 
+                        transactions={transactions}
+                        limit={6}
+                        showActions={false}
+                    />
+                    {transactions.length > 6 && (
+                        <div className="pt-6 text-center">
+                            <Button
+                                variant="ghost"
+                                onClick={() => navigate('/transactions')}
+                                className="text-[10px] text-neutral-400 hover:text-indigo-500 hover:bg-transparent px-0 py-0"
+                            >
+                                Display All Transactions →
+                            </Button>
+                        </div>
+                    )}
                 </FloatingCard>
             </div>
         </div>

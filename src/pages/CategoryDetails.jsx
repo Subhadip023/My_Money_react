@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 import FloatingCard from '../components/ui/FlotingCard';
 import Button from '../components/shared/Button';
 import { cn } from '../utils';
-import TransactionIcon from '../components/ui/TransactionIcon';
+import TransactionTable from '../components/ui/TransactionTable';
 
 export default function CategoryDetails() {
     const { id } = useParams();
@@ -111,30 +111,11 @@ export default function CategoryDetails() {
                 <div className="flex items-center justify-between mb-6">
                     <h3 className="text-xl font-black">Category History</h3>
                 </div>
-                <div className="space-y-4">
-                    {transactions.map((tx) => (
-                        <div key={tx.$id} className="flex items-center justify-between p-4 rounded-2xl bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-700 transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800">
-                            <div className="flex items-center gap-4">
-                                <TransactionIcon type={tx.type} className="w-12 h-12 shadow-sm" />
-                                <div>
-                                    <p className="font-bold truncate max-w-[150px] sm:max-w-[200px]">{tx.label}</p>
-                                    <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                                        {new Date(tx.$createdAt).toLocaleDateString('en-GB')} {tx.accounts && `• ${tx.accounts.accountName}`}
-                                    </p>
-                                </div>
-                            </div>
-                            <div className={`font-black ${tx.type === 'income' ? 'text-emerald-500' : 'text-rose-500'}`}>
-                                {tx.type === 'income' ? '+' : '-'}₹{tx.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                            </div>
-                        </div>
-                    ))}
-                    {transactions.length === 0 && (
-                        <div className="text-center text-neutral-500 dark:text-neutral-400 py-12 font-medium">
-                            <p className="text-4xl mb-4 opacity-20">📭</p>
-                            No transactions found for this category.
-                        </div>
-                    )}
-                </div>
+                <TransactionTable 
+                    transactions={transactions}
+                    showCategory={false}
+                    showActions={false}
+                />
             </FloatingCard>
         </div>
     );
