@@ -20,8 +20,8 @@ export default function TransactionFilters({
                             type="text"
                             placeholder="Search by label..."
                             className="w-full bg-white dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-700 rounded-2xl pl-11 pr-4 py-3.5 text-sm focus:outline-none focus:ring-4 focus:ring-indigo-500/5 transition-all"
-                            value={filters.search}
-                            onChange={(e) => onFilterChange('search', e.target.value)}
+                            value={filters.label}
+                            onChange={(e) => onFilterChange('label', e.target.value)}
                         />
                     </div>
                 </div>

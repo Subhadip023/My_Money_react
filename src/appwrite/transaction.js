@@ -7,10 +7,10 @@ class TransactionService {
         this.databases = new Databases(this.client)
     }
 
-    async createTransaction({ label, amount, type, userId, accountId, categoryId, skipBalanceUpdate = false, loans }) {
+    async createTransaction({ label, amount, type, userId, accountId, categoryId, skipBalanceUpdate = false, loans, investments }) {
         try {
             if (!skipBalanceUpdate) {
-                await accountService.updateAccountBalance({ userId, accountId, amount, type, loans })
+                await accountService.updateAccountBalance({ userId, accountId, amount, type, loans, investments })
             }
             return await this.databases.createDocument(
                 conf.appwriteDataBaseId,
@@ -24,6 +24,7 @@ class TransactionService {
                     accounts: accountId,
                     categories: categoryId,
                     lonans: loans || null,
+                    investments: investments || null,
                 }
             )
         } catch (error) {
@@ -37,7 +38,7 @@ class TransactionService {
             return await this.databases.listDocuments(
                 conf.appwriteDataBaseId,
                 conf.appwriteCollectionIDTransaction,
-                [Query.equal('user_id', userId), Query.orderDesc('$createdAt'), Query.select(["*", "categories.*", "accounts.*"])]
+                [Query.equal('user_id', userId), Query.orderDesc('$createdAt'), Query.select(["*", "categories.*", "accounts.*", "investments.*"])]
             )
         } catch (error) {
             console.error("Appwrite service :: getTransactions :: error", error);
@@ -139,7 +140,7 @@ class TransactionService {
                     Query.greaterThanEqual('$createdAt', firstDay.toISOString()),
                     Query.lessThanEqual('$createdAt', lastDay.toISOString()),
                     Query.orderDesc('$createdAt'),
-                    Query.select(["*", "categories.*", "accounts.*"])
+                    Query.select(["*", "categories.*", "accounts.*", "investments.*"])
                 ]
             )
 
@@ -167,7 +168,7 @@ class TransactionService {
                     Query.greaterThanEqual('$createdAt', firstDay.toISOString()),
                     Query.lessThanEqual('$createdAt', lastDay.toISOString()),
                     Query.orderDesc('$createdAt'),
-                    Query.select(["*", "categories.*", "accounts.*"])
+                    Query.select(["*", "categories.*", "accounts.*", "investments.*"])
                 ]
             )
 
@@ -194,7 +195,7 @@ class TransactionService {
                     Query.lessThanEqual('$createdAt', lastDay.toISOString()),
                     Query.orderDesc('$createdAt'),
                     Query.limit(100),
-                    Query.select(["*", "categories.*", "accounts.*"])
+                    Query.select(["*", "categories.*", "accounts.*", "investments.*"])
                 ]
             )
         } catch (error) {
@@ -202,6 +203,57 @@ class TransactionService {
             throw error;
         }
     }
+    async getTransactionsByFilters({ userId, filters = {}, offset = 0, limit = 25 }) {
+        try {
+            const queries = [
+                Query.equal('user_id', userId),
+                Query.orderDesc('$createdAt'),
+                Query.offset(offset),
+                Query.limit(limit),
+                Query.select(["*", "categories.*", "accounts.*", "investments.*"])
+            ];
+
+            if (filters.type && filters.type !== 'all') {
+                queries.push(Query.equal('type', filters.type));
+            }
+            if (filters.category && filters.category !== 'all') {
+                queries.push(Query.equal('categories', filters.category));
+            }
+            if (filters.account && filters.account !== 'all') {
+                queries.push(Query.equal('accounts', filters.account));
+            }
+            // Note: Partial label search is best handled client-side unless a search index is pre-configured.
+            // For now, we return the filtered list by metadata and the component can refine by label.
+
+            return await this.databases.listDocuments(
+                conf.appwriteDataBaseId,
+                conf.appwriteCollectionIDTransaction,
+                queries
+            );
+        } catch (error) {
+            console.error("Appwrite service :: getTransactionsByFilters :: error", error);
+            throw error;
+        }
+    }
+
+    async getTransactionsByInvestment({ userId, investmentId }) {
+        try {
+            return await this.databases.listDocuments(
+                conf.appwriteDataBaseId,
+                conf.appwriteCollectionIDTransaction,
+                [
+                    Query.equal('user_id', userId),
+                    Query.equal('investments', investmentId),
+                    Query.orderDesc('$createdAt'),
+                    Query.select(["*", "categories.*", "accounts.*", "investments.*"])
+                ]
+            );
+        } catch (error) {
+            console.error("Appwrite service :: getTransactionsByInvestment :: error", error);
+            throw error;
+        }
+    }
+
 }
 
 const transactionService = new TransactionService()

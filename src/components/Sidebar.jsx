@@ -1,13 +1,21 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { cn } from '../utils'
 import { dashboardRoutes } from '../config/routes'
 import Button from './shared/Button'
+import authService from '../appwrite/auth'
+import { logout } from '../redux/authSlice'
+import { setLoading } from '../redux/uiSlice'
+import toast from 'react-hot-toast'
+import { useNavigate } from 'react-router-dom'
 
 const Sidebar = ({ isOpen, onClose }) => {
     const location = useLocation()
     const user = useSelector((state) => state.auth.user)
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
+    
 
     const navItems = dashboardRoutes
         .filter(route => !route.path.includes(':')) // Hide detail routes from sidebar
@@ -20,6 +28,24 @@ const Sidebar = ({ isOpen, onClose }) => {
             path: `/${route.path}`,
             icon: route.icon || '📍'
         }));
+
+
+            const handleLogout = async () => {
+                const confirmLogout = window.confirm("Are you sure you want to logout?")
+                if (!confirmLogout) return
+        
+                dispatch(setLoading(true))
+                try {
+                    await authService.logout()
+                    dispatch(logout())
+                    toast.success("Logged out successfully")
+                    navigate('/login')
+                } catch (error) {
+                    toast.error(error.message || "Failed to logout")
+                } finally {
+                    dispatch(setLoading(false))
+                }
+            }
 
     return (
         <>
@@ -93,15 +119,22 @@ const Sidebar = ({ isOpen, onClose }) => {
                     })}
                 </nav>
 
-                {/* Footer Actions (Empty for now) 
-                <div className="pt-6 border-t border-neutral-100 dark:border-neutral-700 space-y-3 w-full items-center flex justify-center">
-                    <a href="mailto:subhadip240420@gmail.com" className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-bold flex items-center gap-1.5 transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-                        </svg>
-                        Contact
-                    </a>
-                </div>*/}
+                 {/* Footer Actions */}
+                <div className="pt-2 border-t border-neutral-100 dark:border-neutral-700 space-y-3 w-full items-center flex justify-center">
+                    {/* logout button */}
+                    <Button
+                        variant="ghost"
+                        onClick={() => {
+                            handleLogout()
+                        }}
+
+                        className="w-full flex items-center gap-3 px-4 sm:px-4 sm:py-2 text-md text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 justify-start">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
+                            </svg>
+                            Logout
+                    </Button>
+                </div>
             </aside>
         </>
     )

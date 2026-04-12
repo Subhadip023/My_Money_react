@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+
 import Button from '../components/shared/Button'
 import FloatingCard from '../components/ui/FlotingCard'
 import Modal from '../components/ui/Modal'
@@ -7,18 +9,85 @@ import investmentService from '../appwrite/investment'
 import transactionService from '../appwrite/transaction'
 import InvestmentModal from '../components/ui/InvestmentModal'
 import toast from 'react-hot-toast'
+import { setLoading } from '../redux/uiSlice'
 
 export default function Investments() {
     const [investments, setInvestments] = useState([])
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [selectedInvestment, setSelectedInvestment] = useState(null)
     const user = useSelector((state) => state.auth.user)
+    const navigate = useNavigate()
+    const dispatch = useDispatch();
+    const fetchCurrentData = async (symbol, showLoading = true) => {
+        try {
+            if (showLoading) dispatch(setLoading(true));
+            // Automatically append .NS if no exchange is specified
+            const querySymbol = symbol.includes('.') ? symbol : `${symbol}.NS`;
+            const res = await fetch(`https://69db9d6c003aa1b2bfe1.fra.appwrite.run/?symbol=${querySymbol}`);
+
+            if (!res.ok) throw new Error(`Server Error: ${res.status}`);
+
+            const data = await res.json();
+            if (showLoading) dispatch(setLoading(false));
+            return data;
+        } catch (err) {
+            console.error("Fetch Failed:", err.message);
+            if (showLoading) dispatch(setLoading(false));
+            return null;
+        }
+    }
+
+    const syncStockPrices = async (stocks) => {
+        const today = new Date().toDateString();
+        
+        // Identify stocks that haven't been updated today
+        const stocksToUpdate = stocks.filter(stock => {
+            const lastUpdate = new Date(stock.$updatedAt).toDateString();
+            return lastUpdate !== today && stock.symbol && stock.quantity;
+        });
+
+        if (stocksToUpdate.length === 0) return;
+
+        const syncToast = toast.loading('Refreshing portfolio values...');
+        let updatedCount = 0;
+        
+        try {
+            for (const stock of stocksToUpdate) {
+                const data = await fetchCurrentData(stock.symbol, false);
+                const price = data?.price || data?.currentPrice || data?.close;
+                
+                if (price) {
+                    const newCurrentValue = Number(price) * Number(stock.quantity);
+                    await investmentService.updateInvestment(stock.$id, { 
+                        currentValue: newCurrentValue 
+                    });
+                    updatedCount++;
+                }
+            }
+            
+            if (updatedCount > 0) {
+                toast.success(`Updated ${updatedCount} portfolio values`, { id: syncToast });
+                fetchInvestments(); // Refresh list to get new $updatedAt values
+            } else {
+                toast.dismiss(syncToast);
+            }
+        } catch (error) {
+            console.error("Sync failed:", error);
+            toast.error('Failed to update stock prices', { id: syncToast });
+        }
+    };
 
     const fetchInvestments = async () => {
         if (!user) return
         try {
             const res = await investmentService.getInvestments({ userId: user.$id })
             setInvestments(res.documents)
+            
+            // Trigger sync for stocks if it's a new day
+            const stocks = res.documents.filter(inv => inv.investmentType === 'stock');
+            if (stocks.length > 0) {
+                syncStockPrices(stocks);
+            }
         } catch (error) {
             toast.error('Failed to fetch investments')
         }
@@ -110,7 +179,6 @@ export default function Investments() {
                     <thead>
                         <tr className='bg-neutral-50/50 dark:bg-neutral-800/50'>
                             <th className='px-8 py-5 text-xs font-black uppercase tracking-widest text-neutral-400'>Asset</th>
-                            <th className='px-8 py-5 text-xs font-black uppercase tracking-widest text-neutral-400 text-right'>Qty / Symbol</th>
                             <th className='px-8 py-5 text-xs font-black uppercase tracking-widest text-neutral-400 text-right'>Invested</th>
                             <th className='px-8 py-5 text-xs font-black uppercase tracking-widest text-neutral-400 text-right'>Current Value</th>
                             <th className='px-8 py-5 text-xs font-black uppercase tracking-widest text-neutral-400 text-right'>Returns</th>
@@ -129,22 +197,23 @@ export default function Investments() {
                                                 {(inv.investmentType || '??').slice(0, 2).toUpperCase()}
                                             </div>
                                             <div>
-                                                <div className="font-bold text-neutral-900 dark:text-white">{inv.investmentName}</div>
+                                                <div className="font-bold text-neutral-900 dark:text-white">{inv.investmentName}  {inv.investmentType=="stock"?`(${inv.quantity} shares)`:""}</div>
                                                 <div className="text-xs font-medium text-neutral-500 tracking-wider">Avg Price: ₹{inv.avgBuyPrice?.toLocaleString('en-IN') || '0.00'}</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td className='px-8 py-6 text-right font-bold text-neutral-600 dark:text-neutral-300'>
-                                        <div className="flex flex-col items-end">
-                                            <span>{inv.quantity || 0} units</span>
-                                            <span className="text-[10px] uppercase tracking-tighter opacity-60">{inv.symbol || 'N/A'}</span>
-                                        </div>
-                                    </td>
-                                    <td className='px-8 py-6 text-right font-bold text-neutral-600 dark:text-neutral-300'>
                                         ₹{inv.investedAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                                     </td>
-                                    <td className='px-8 py-6 text-right font-black text-neutral-900 dark:text-white tabular-nums'>
-                                        ₹{inv.currentValue.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                                    <td className='px-8 py-6 text-right tabular-nums'>
+                                        <div className="flex flex-col items-end">
+                                            <span className="font-black text-neutral-900 dark:text-white">
+                                                ₹{inv.currentValue.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                                            </span>
+                                            <span className="text-[10px] font-medium text-neutral-400 tracking-tight">
+                                                Synced: {new Date(inv.$updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
+                                            </span>
+                                        </div>
                                     </td>
                                     <td className={`px-8 py-6 text-right font-bold ${pnl >= 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
                                         <div className="flex flex-col items-end">
@@ -154,10 +223,12 @@ export default function Investments() {
                                     </td>
                                     <td className='px-8 py-6 text-right'>
                                         <div className="flex gap-2 justify-end">
+                                            <Button variant="ghost" size="sm" onClick={() => navigate(`/investments/${inv.$id}`)}>View</Button>
                                             <Button variant="secondary" size="sm" onClick={() => handleEdit(inv)}>Edit</Button>
                                             <Button variant="danger" size="sm" onClick={() => handleDelete(inv.$id)}>Delete</Button>
                                         </div>
                                     </td>
+
                                 </tr>
                             )
                         })}

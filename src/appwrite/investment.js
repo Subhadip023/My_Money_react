@@ -57,6 +57,19 @@ class InvestmentService {
         }
     }
 
+    async getInvestment(documentId) {
+        try {
+            return await this.databases.getDocument(
+                conf.appwriteDataBaseId,
+                conf.appwriteCollectionIDInvestment,
+                documentId
+            );
+        } catch (error) {
+            console.error("InvestmentService :: getInvestment :: error", error);
+            throw error;
+        }
+    }
+
     async updateInvestment(documentId, data) {
         try {
             return await this.databases.updateDocument(

@@ -10,6 +10,7 @@ export default function TransactionTable({
     showActions = true,
     showAccount = true,
     showCategory = true,
+    showInvestment = false,
     limit 
 }) {
     const displayTransactions = limit ? transactions.slice(0, limit) : transactions;
@@ -28,11 +29,11 @@ export default function TransactionTable({
             <table className='w-full text-left border-collapse'>
                 <thead>
                     <tr className='bg-neutral-50/50 dark:bg-neutral-800/50'>
-                        <th className='px-8 py-5 text-sm font-bold uppercase tracking-widest text-neutral-400'>Transaction</th>
-                        <th className='px-8 py-5 text-sm font-bold uppercase tracking-widest text-neutral-400'>Date</th>
-                        {showCategory && <th className='px-8 py-5 text-sm font-bold uppercase tracking-widest text-neutral-400'>Category</th>}
-                        <th className='px-8 py-5 text-sm font-bold uppercase tracking-widest text-neutral-400 text-right'>Amount</th>
-                        {showActions && <th className='px-8 py-5 text-sm font-bold uppercase tracking-widest text-neutral-400 text-right'>Action</th>}
+                        <th className='px-8 py-5 text-sm font-bold uppercase tracking-widest text-neutral-400 whitespace-nowrap'>Transaction</th>
+                        <th className='px-8 py-5 text-sm font-bold uppercase tracking-widest text-neutral-400 whitespace-nowrap'>Date</th>
+                        {showCategory && <th className='px-8 py-5 text-sm font-bold uppercase tracking-widest text-neutral-400 whitespace-nowrap'>Category</th>}
+                        <th className='px-8 py-5 text-sm font-bold uppercase tracking-widest text-neutral-400 text-right whitespace-nowrap'>Amount</th>
+                        {showActions && <th className='px-8 py-5 text-sm font-bold uppercase tracking-widest text-neutral-400 text-right whitespace-nowrap'>Action</th>}
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700/50">
@@ -57,7 +58,7 @@ export default function TransactionTable({
                             {showCategory && (
                                 <td className='px-8 py-6'>
                                     <span className="px-3 py-1 rounded-full bg-neutral-100 dark:bg-neutral-700 text-xs font-bold text-neutral-600 dark:text-neutral-300 whitespace-nowrap">
-                                        {tx.categories?.name || 'Uncategorized'}
+                                        {tx.categories?.name || "Uncategorized"}
                                     </span>
                                 </td>
                             )}
@@ -69,11 +70,11 @@ export default function TransactionTable({
                             </td>
                             {showActions && (
                                 <td className='px-8 py-6 text-right'>
-                                    <div className="flex justify-end gap-2">
+                                    <div className="flex justify-end gap-2 text-right">
                                         <Button
                                             variant="ghost"
                                             onClick={() => onEdit?.(tx)}
-                                            className="p-2 text-indigo-600 hover:bg-neutral-100 dark:hover:bg-neutral-700 disabled:opacity-30"
+                                            className="p- group/btn text-indigo-600 hover:bg-neutral-100 dark:hover:bg-neutral-700 disabled:opacity-30"
                                             title="Edit"
                                             disabled={!onEdit}
                                         >
@@ -102,3 +103,4 @@ export default function TransactionTable({
         </div>
     );
 }
+

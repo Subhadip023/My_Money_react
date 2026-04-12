@@ -12,6 +12,8 @@ import Settings from '../pages/Settings'
 import Issues from '../pages/Issues'
 import AdminIssues from '../pages/AdminIssues'
 import IssueDetails from '../pages/IssueDetails'
+import InvestmentDetails from '../pages/InvestmentDetails'
+
 
 /*
 
@@ -61,6 +63,13 @@ export const dashboardRoutes = [
         name: 'Investments',
         requiredLabel: 'premium'
     },
+    {
+        path: 'investments/:id',
+        element: InvestmentDetails,
+        name: 'Investment Details',
+        requiredLabel: 'premium'
+    },
+
     {
         icon: '💰',
         path: 'loans',
