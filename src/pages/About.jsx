@@ -31,7 +31,7 @@ export const About = () => {
                     },
                     {
                         title: 'Investment Portfolio',
-                        desc: 'Monitor your diversified assets, from Mutual Funds and Stocks to Fixed Deposits, with up-to-date valuations.',
+                        desc: 'Monitor your diversified assets, from Mutual Funds and Stocks to Fixed Deposits, with up-to-date valuations synced once daily.',
                         icon: '🏦'
                     },
                     {

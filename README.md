@@ -13,7 +13,7 @@ MyMoney is a feature-rich, high-performance financial command center designed to
 
 ### 🏦 Investment & Portfolio Management
 - **Asset Diversity**: Track Mutual Funds, Stocks, Fixed Deposits (FDs), and more.
-- **Live Valuations**: Premium stats-based tracking of current values and return-on-investment (ROI).
+- **Live Valuations**: Premium stats-based tracking with automated once-daily stock market price synchronization.
 
 ### 💸 Debt & Loan Ledger
 - **Loan Lifecycle**: Complete tracking for Personal Loans, Mortgages, and Credit.
