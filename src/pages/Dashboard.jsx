@@ -11,6 +11,8 @@ import FloatingCard from '../components/ui/FlotingCard'
 import { Link } from 'react-router-dom'
 import Button from '../components/shared/Button'
 import loanService from '../appwrite/loans'
+import InvestmentModal from '../components/ui/InvestmentModal'
+import LoanModal from '../components/ui/LoanModal'
 export default function Dashboard() {
     const [totalBalance, setTotalBalance] = useState(0)
     const [monthlyExpences, setMonthlyExpences] = useState(0)
@@ -22,6 +24,8 @@ export default function Dashboard() {
     const [loans, setLoans] = useState([])
     const [todaySpent, setTodaySpent] = useState(0)
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const [isInvestmentModalOpen, setIsInvestmentModalOpen] = useState(false)
+    const [isLoanModalOpen, setIsLoanModalOpen] = useState(false)
     const user = useSelector((state) => state.auth.user)
 
     const calculateTotalBalance = async () => {
@@ -139,14 +143,39 @@ export default function Dashboard() {
                     <h1 className="text-3xl font-black tracking-tight">Financial Overview</h1>
                     <p className="text-neutral-500 dark:text-neutral-400 mt-1">Welcome back! Here's what's happening today.</p>
                 </div>
-                <div className="flex gap-4">
-
+                <div className="flex flex-wrap gap-3">
+                    <Button
+                        variant="secondary"
+                        onClick={() => setIsInvestmentModalOpen(true)}
+                        icon={() => (
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-4 h-4 text-emerald-500">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                        )}
+                    >
+                        Investment
+                    </Button>
+                    <Button
+                        variant="secondary"
+                        onClick={() => setIsLoanModalOpen(true)}
+                        icon={() => (
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-4 h-4 text-rose-500">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                        )}
+                    >
+                        Loan
+                    </Button>
                     <Button
                         id="tour-add-transaction"
                         onClick={() => setIsModalOpen(true)}
-                        className=""
+                        icon={() => (
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-4 h-4">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                        )}
                     >
-                        Add Transaction
+                        Transaction
                     </Button>
                 </div>
             </div>
@@ -197,7 +226,6 @@ export default function Dashboard() {
                         showCategory={false}
                     />
                 </FloatingCard>
-
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -252,6 +280,18 @@ export default function Dashboard() {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onTransactionSaved={handleTransactionAdded}
+            />
+
+            <InvestmentModal
+                isOpen={isInvestmentModalOpen}
+                onClose={() => setIsInvestmentModalOpen(false)}
+                onInvestmentSaved={handleTransactionAdded}
+            />
+
+            <LoanModal
+                isOpen={isLoanModalOpen}
+                onClose={() => setIsLoanModalOpen(false)}
+                onLoanSaved={handleTransactionAdded}
             />
 
 
