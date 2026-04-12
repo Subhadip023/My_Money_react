@@ -150,6 +150,33 @@ class TransactionService {
             throw error;
         }
     }
+    async dailyExpenses({ userId }) {
+        const now = new Date();
+        const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        startOfDay.setHours(0, 0, 0, 0);
+        
+        const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        endOfDay.setHours(23, 59, 59, 999);
+
+        try {
+            const res = await this.databases.listDocuments(
+                conf.appwriteDataBaseId,
+                conf.appwriteCollectionIDTransaction,
+                [
+                    Query.equal('user_id', userId),
+                    Query.equal('type', 'expense'),
+                    Query.greaterThanEqual('$createdAt', startOfDay.toISOString()),
+                    Query.lessThanEqual('$createdAt', endOfDay.toISOString()),
+                    Query.select(["amount"])
+                ]
+            )
+
+            return res.documents.reduce((total, transaction) => total + transaction.amount, 0)
+        } catch (error) {
+            console.error("Appwrite service :: dailyExpenses :: error", error);
+            throw error;
+        }
+    }
     async monthyIncome({ userId }) {
         const now = new Date();
 

@@ -97,8 +97,8 @@ export default function Investments() {
         fetchInvestments()
     }, [user])
 
-    const totalInvested = investments.reduce((sum, inv) => sum + Number(inv.investedAmount), 0)
-    const totalCurrentValue = investments.reduce((sum, inv) => sum + Number(inv.currentValue), 0)
+    const totalInvested = investments.reduce((sum, inv) => sum + Number(inv.investedAmount || 0), 0)
+    const totalCurrentValue = investments.reduce((sum, inv) => sum + Number(inv.currentValue || 0), 0)
     const totalReturns = totalCurrentValue - totalInvested
     const returnsPercentage = totalInvested > 0 ? ((totalReturns / totalInvested) * 100).toFixed(2) : 0
 
@@ -197,8 +197,18 @@ export default function Investments() {
                                                 {(inv.investmentType || '??').slice(0, 2).toUpperCase()}
                                             </div>
                                             <div>
-                                                <div className="font-bold text-neutral-900 dark:text-white">{inv.investmentName}  {inv.investmentType=="stock"?`(${inv.quantity} shares)`:""}</div>
-                                                <div className="text-xs font-medium text-neutral-500 tracking-wider">Avg Price: ₹{inv.avgBuyPrice?.toLocaleString('en-IN') || '0.00'}</div>
+                                                <div className="font-bold text-neutral-900 dark:text-white">
+                                                    {inv.investmentName} {inv.investmentType === "stock" && inv.quantity ? `(${inv.quantity} shares)` : ""}
+                                                </div>
+                                                <div className="flex items-center gap-2 text-xs font-medium text-neutral-500 tracking-wider">
+                                                    <span>Avg Price: ₹{inv.avgBuyPrice?.toLocaleString('en-IN') || '0.00'}</span>
+                                                    {inv.symbol && (
+                                                        <>
+                                                            <span className="w-1 h-1 rounded-full bg-neutral-300" />
+                                                            <span className="uppercase">{inv.symbol}</span>
+                                                        </>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
                                     </td>

@@ -10,6 +10,7 @@ import PieChart from '../components/PieChart'
 import FloatingCard from '../components/ui/FlotingCard'
 import { Link } from 'react-router-dom'
 import Button from '../components/shared/Button'
+import loanService from '../appwrite/loans'
 export default function Dashboard() {
     const [totalBalance, setTotalBalance] = useState(0)
     const [monthlyExpences, setMonthlyExpences] = useState(0)
@@ -17,6 +18,9 @@ export default function Dashboard() {
     const [recentTransactions, setRecentTransactions] = useState([])
     const [accounts, setAccounts] = useState([])
     const [investmentStats, setInvestmentStats] = useState({ totalInvested: 0, currentValue: 0 })
+    const [investments, setInvestments] = useState([])
+    const [loans, setLoans] = useState([])
+    const [todaySpent, setTodaySpent] = useState(0)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const user = useSelector((state) => state.auth.user)
 
@@ -35,7 +39,16 @@ export default function Dashboard() {
             const res = await transactionService.monthyExpences({ userId: user.$id })
             setMonthlyExpences(res)
         } catch (error) {
-            console.error("Failed to calculate balance:", error)
+            console.error("Failed to calculate monthly expenses:", error)
+        }
+    }
+    const calculateTodaySpent = async () => {
+        if (!user) return
+        try {
+            const res = await transactionService.dailyExpenses({ userId: user.$id })
+            setTodaySpent(res)
+        } catch (error) {
+            console.error("Failed to calculate today spent:", error)
         }
     }
     const calculateMonthlyIncome = async () => {
@@ -73,11 +86,23 @@ export default function Dashboard() {
         if (!user) return;
         try {
             const res = await investmentService.getInvestments({ userId: user.$id });
-            const totalInvested = res.documents.reduce((sum, inv) => sum + Number(inv.investedAmount), 0);
-            const currentValue = res.documents.reduce((sum, inv) => sum + Number(inv.currentValue), 0);
+            const totalInvested = res.documents.reduce((sum, inv) => sum + Number(inv.investedAmount || 0), 0);
+            const currentValue = res.documents.reduce((sum, inv) => sum + Number(inv.currentValue || 0), 0);
             setInvestmentStats({ totalInvested, currentValue });
+            setInvestments(res.documents.slice(0, 5));
         } catch (error) {
             console.error("Failed to fetch investment stats:", error);
+        }
+    };
+    const fetchLoans = async () => {
+        if (!user) return;
+        try {
+            const res = await loanService.getUserLoans(user.$id);
+            if (res && res.documents) {
+                setLoans(res.documents.slice(0, 5));
+            }
+        } catch (error) {
+            console.error("Failed to fetch loans:", error);
         }
     };
 
@@ -88,6 +113,8 @@ export default function Dashboard() {
         fetchRecentTransactions()
         fetchAccounts()
         fetchInvestmentStats()
+        fetchLoans()
+        calculateTodaySpent()
     }, [user])
 
     const handleTransactionAdded = () => {
@@ -97,6 +124,8 @@ export default function Dashboard() {
         fetchRecentTransactions()
         fetchAccounts()
         fetchInvestmentStats()
+        fetchLoans()
+        calculateTodaySpent()
     }
 
     const pieChartData = accounts
@@ -111,7 +140,7 @@ export default function Dashboard() {
                     <p className="text-neutral-500 dark:text-neutral-400 mt-1">Welcome back! Here's what's happening today.</p>
                 </div>
                 <div className="flex gap-4">
-                  
+
                     <Button
                         id="tour-add-transaction"
                         onClick={() => setIsModalOpen(true)}
@@ -126,12 +155,12 @@ export default function Dashboard() {
                 {[
                     { id: 'tour-balance-card', label: 'Total Balance', value: `₹${totalBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, icon: '💰', color: 'bg-emerald-500' },
                     { label: 'Monthly Income', value: `₹${monthlyIncome.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, icon: '📈', color: 'bg-indigo-500' },
-                    { label: 'Monthly Expenses', value: `₹${monthlyExpences.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, icon: '📉', color: 'bg-rose-500' },{ 
-                        label: 'Portfolio Value', 
-                        value: `₹${investmentStats.currentValue.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, 
-                        icon: '🏦', 
-                        color: 'bg-emerald-500', 
-                        returns: investmentStats.currentValue - investmentStats.totalInvested 
+                    { label: "Today's Spending", value: `₹${todaySpent.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, icon: '📉', color: 'bg-rose-500' }, {
+                        label: 'Portfolio Value',
+                        value: `₹${(investmentStats.currentValue || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
+                        icon: '🏦',
+                        color: 'bg-emerald-500',
+                        returns: investmentStats.currentValue - investmentStats.totalInvested
                     },
                 ].filter(Boolean).map((stat, i) => (
                     <FloatingCard id={stat.id} key={i} className="p-6 md:p-8 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 shadow-sm overflow-hidden relative group">
@@ -151,24 +180,72 @@ export default function Dashboard() {
                 ))}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                
-                    <FloatingCard className="p-6 md:p-8 hidden md:block rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 shadow-sm overflow-hidden relative group">
-                        {/* Chat that show the money in account */}
-                        <PieChart data={pieChartData} title="Account Balances" showTotal={true} />
-                    </FloatingCard>
-                    <FloatingCard className="p-6 md:p-8 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 shadow-sm relative group overflow-hidden">
-                        <div className="flex items-center justify-between mb-6">
-                            <h3 className="text-xl font-black">Recent Transactions</h3>
-                            <Link to="/transactions" className="text-sm font-bold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400">View All →</Link>
-                        </div>
-                        <TransactionTable 
-                            transactions={recentTransactions}
-                            showActions={false}
-                            showAccount={true}
-                            showCategory={false}
-                        />
-                    </FloatingCard>
-                
+
+                <FloatingCard className="p-6 md:p-8 hidden md:block rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 shadow-sm overflow-hidden relative group">
+                    {/* Chat that show the money in account */}
+                    <PieChart data={pieChartData} title="Account Balances" showTotal={true} />
+                </FloatingCard>
+                <FloatingCard className="p-6 md:p-8 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 shadow-sm relative group overflow-hidden">
+                    <div className="flex items-center justify-between mb-6">
+                        <h3 className="text-xl font-black">Recent Transactions</h3>
+                        <Link to="/transactions" className="text-sm font-bold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400">View All →</Link>
+                    </div>
+                    <TransactionTable
+                        transactions={recentTransactions}
+                        showActions={false}
+                        showAccount={true}
+                        showCategory={false}
+                    />
+                </FloatingCard>
+
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FloatingCard className="p-6 md:p-8 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 shadow-sm relative group overflow-hidden">
+                    <div className="flex items-center justify-between mb-6">
+                        <h3 className="text-xl font-black">Top Investments</h3>
+                        <Link to="/investments" className="text-sm font-bold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400">View All →</Link>
+                    </div>
+                    <div className="space-y-4">
+                        {investments.map(inv => (
+                            <div key={inv.$id} className="flex items-center justify-between p-4 rounded-2xl bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-100 dark:border-neutral-800">
+                                <div>
+                                    <p className="font-bold text-neutral-900 dark:text-white truncate max-w-[150px]">{inv.investmentName}</p>
+                                    <p className="text-[10px] font-semibold text-neutral-400 uppercase tracking-widest">{inv.investmentType}</p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="font-black text-neutral-900 dark:text-white">₹{inv.currentValue.toLocaleString('en-IN')}</p>
+                                    <p className={`text-[10px] font-bold ${inv.currentValue >= inv.investedAmount ? 'text-emerald-500' : 'text-rose-500'}`}>
+                                        {inv.currentValue >= inv.investedAmount ? '↑' : '↓'} {(((inv.currentValue - inv.investedAmount) / (inv.investedAmount || 1)) * 100).toFixed(1)}%
+                                    </p>
+                                </div>
+                            </div>
+                        ))}
+                        {investments.length === 0 && <p className="text-center py-6 text-neutral-400 font-medium italic">No active investments found.</p>}
+                    </div>
+                </FloatingCard>
+
+                <FloatingCard className="p-6 md:p-8 rounded-3xl bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 shadow-sm relative group overflow-hidden">
+                    <div className="flex items-center justify-between mb-6">
+                        <h3 className="text-xl font-black">Open Loans</h3>
+                        <Link to="/loans" className="text-sm font-bold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400">View All →</Link>
+                    </div>
+                    <div className="space-y-4">
+                        {loans.map(loan => (
+                            <div key={loan.$id} className="flex items-center justify-between p-4 rounded-2xl bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-100 dark:border-neutral-800">
+                                <div>
+                                    <p className="font-bold text-neutral-900 dark:text-white truncate max-w-[150px]">{loan.loanName}</p>
+                                    <p className="text-[10px] font-semibold text-neutral-400 uppercase tracking-widest">{loan.loanType}</p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="font-black text-neutral-900 dark:text-white">₹{(loan.outstandingAmount || 0).toLocaleString('en-IN')}</p>
+                                    <p className="text-[10px] font-black text-rose-500 uppercase tracking-tighter">O/S Debt</p>
+                                </div>
+                            </div>
+                        ))}
+                        {loans.length === 0 && <p className="text-center py-6 text-neutral-400 font-medium italic">No active loans found.</p>}
+                    </div>
+                </FloatingCard>
             </div>
 
             <TransactionModal
@@ -177,7 +254,7 @@ export default function Dashboard() {
                 onTransactionSaved={handleTransactionAdded}
             />
 
-           
+
         </div>
     )
 }
