@@ -27,6 +27,7 @@ export default function Dashboard() {
     const [isInvestmentModalOpen, setIsInvestmentModalOpen] = useState(false)
     const [isLoanModalOpen, setIsLoanModalOpen] = useState(false)
     const user = useSelector((state) => state.auth.user)
+    const isPremiumUser = user.labels.includes('premium')
 
     const calculateTotalBalance = async () => {
         if (!user) return
@@ -144,7 +145,7 @@ export default function Dashboard() {
                     <p className="text-neutral-500 dark:text-neutral-400 mt-1">Welcome back! Here's what's happening today.</p>
                 </div>
                 <div className="flex flex-wrap gap-3">
-                    <Button
+                    {isPremiumUser && <Button
                         variant="secondary"
                         onClick={() => setIsInvestmentModalOpen(true)}
                         icon={() => (
@@ -154,8 +155,8 @@ export default function Dashboard() {
                         )}
                     >
                         Investment
-                    </Button>
-                    <Button
+                    </Button>}
+                    {isPremiumUser && <Button
                         variant="secondary"
                         onClick={() => setIsLoanModalOpen(true)}
                         icon={() => (
@@ -165,7 +166,7 @@ export default function Dashboard() {
                         )}
                     >
                         Loan
-                    </Button>
+                    </Button>}
                     <Button
                         id="tour-add-transaction"
                         onClick={() => setIsModalOpen(true)}
