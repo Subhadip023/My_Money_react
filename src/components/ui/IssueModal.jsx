@@ -49,8 +49,9 @@ const IssueModal = ({ isOpen, onClose, onIssueSaved }) => {
                 title: data.title,
                 desc: data.desc,
                 imageId: imageId,
-                status: 1, // Default status: In Progress
-                userId: user.$id
+                status: 1, // Default status: Issued
+                userId: user.$id,
+                type: data.type
             };
 
             await issueService.createIssue(issueData);
@@ -67,15 +68,30 @@ const IssueModal = ({ isOpen, onClose, onIssueSaved }) => {
     return (
         <Modal isOpen={isOpen} onClose={onClose} title="Report an Issue">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-                <div>
-                    <label className="block text-sm font-bold text-neutral-700 dark:text-neutral-300 mb-2 uppercase tracking-wide">Issue Title</label>
-                    <input
-                        type="text"
-                        className={`w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-900/50 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all dark:text-white font-medium ${errors.title ? 'border-rose-500' : 'border-neutral-200 dark:border-neutral-700'}`}
-                        placeholder="Short description of the issue"
-                        {...register("title", { required: "Title is required" })}
-                    />
-                    {errors.title && <span className="text-xs font-bold text-rose-500 mt-1 block">{errors.title.message}</span>}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div className="flex-1">
+                        <label className="block text-sm font-bold text-neutral-700 dark:text-neutral-300 mb-2 uppercase tracking-wide">Issue Title</label>
+                        <input
+                            type="text"
+                            className={`w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-900/50 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all dark:text-white font-medium ${errors.title ? 'border-rose-500' : 'border-neutral-200 dark:border-neutral-700'}`}
+                            placeholder="Short summary"
+                            {...register("title", { required: "Title is required" })}
+                        />
+                        {errors.title && <span className="text-xs font-bold text-rose-500 mt-1 block">{errors.title.message}</span>}
+                    </div>
+                    <div className="w-full md:w-40">
+                        <label className="block text-sm font-bold text-neutral-700 dark:text-neutral-300 mb-2 uppercase tracking-wide">Type</label>
+                        <select
+                            className="w-full px-4 py-3 bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all dark:text-white font-medium cursor-pointer"
+                            {...register("type")}
+                            defaultValue="issue"
+                        >
+                            <option value="bug">Bug</option>
+                            <option value="feature">Feature</option>
+                            <option value="issue">Issue</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div>

@@ -9,11 +9,13 @@ import accountService from '../appwrite/account'
 import transactionService from '../appwrite/transaction'
 import categoryService from '../appwrite/category'
 import investmentService from '../appwrite/investment'
+import loanService from '../appwrite/loans'
 
 export {
     authService,
     accountService,
     transactionService,
     categoryService,
-    investmentService
+    investmentService,
+    loanService
 }

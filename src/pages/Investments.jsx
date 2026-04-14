@@ -18,6 +18,7 @@ export default function Investments() {
     const user = useSelector((state) => state.auth.user)
     const navigate = useNavigate()
     const dispatch = useDispatch();
+    const isSyncing = React.useRef(false);
     const fetchCurrentData = async (symbol, showLoading = true) => {
         try {
             if (showLoading) dispatch(setLoading(true));
@@ -38,6 +39,8 @@ export default function Investments() {
     }
 
     const syncStockPrices = async (stocks) => {
+        if (isSyncing.current) return;
+        
         const today = new Date().toDateString();
         
         // Identify stocks that haven't been updated today
@@ -48,6 +51,7 @@ export default function Investments() {
 
         if (stocksToUpdate.length === 0) return;
 
+        isSyncing.current = true;
         const syncToast = toast.loading('Refreshing portfolio values...');
         let updatedCount = 0;
         
@@ -67,26 +71,32 @@ export default function Investments() {
             
             if (updatedCount > 0) {
                 toast.success(`Updated ${updatedCount} portfolio values`, { id: syncToast });
-                fetchInvestments(); // Refresh list to get new $updatedAt values
+                // We refresh the list to get new $updatedAt values, 
+                // but our 'isSyncing' flag will prevent the next fetchInvestments from re-triggering this.
+                await fetchInvestments(true); 
             } else {
                 toast.dismiss(syncToast);
             }
         } catch (error) {
             console.error("Sync failed:", error);
             toast.error('Failed to update stock prices', { id: syncToast });
+        } finally {
+            isSyncing.current = false;
         }
     };
 
-    const fetchInvestments = async () => {
+    const fetchInvestments = async (skipSync = false) => {
         if (!user) return
         try {
             const res = await investmentService.getInvestments({ userId: user.$id })
             setInvestments(res.documents)
             
-            // Trigger sync for stocks if it's a new day
-            const stocks = res.documents.filter(inv => inv.investmentType === 'stock');
-            if (stocks.length > 0) {
-                syncStockPrices(stocks);
+            if (!skipSync) {
+                // Trigger sync for stocks if it's a new day
+                const stocks = res.documents.filter(inv => inv.investmentType === 'stock');
+                if (stocks.length > 0) {
+                    syncStockPrices(stocks);
+                }
             }
         } catch (error) {
             toast.error('Failed to fetch investments')

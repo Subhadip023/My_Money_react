@@ -12,7 +12,7 @@ export class IssueService {
         this.databases = new Databases(this.client);
     }
 
-    async createIssue({ title, desc, imageId, status, userId }) {
+    async createIssue({ title, desc, imageId, status, userId, type }) {
         try {
             return await this.databases.createDocument(
                 conf.appwriteDataBaseId,
@@ -23,7 +23,8 @@ export class IssueService {
                     desc,
                     imageId,
                     status,
-                    userId
+                    userId,
+                    type: type || 'issue'
                 }
             );
         } catch (error) {
@@ -32,7 +33,7 @@ export class IssueService {
         }
     }
 
-    async updateIssue(documentId, { title, desc, imageId, status }) {
+    async updateIssue(documentId, { title, desc, imageId, status, type }) {
         try {
             return await this.databases.updateDocument(
                 conf.appwriteDataBaseId,
@@ -42,7 +43,8 @@ export class IssueService {
                     title,
                     desc,
                     imageId,
-                    status
+                    status,
+                    type
                 }
             );
         } catch (error) {

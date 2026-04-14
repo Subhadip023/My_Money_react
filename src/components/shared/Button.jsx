@@ -11,6 +11,7 @@ const Button = ({
     disabled,
     loading = false,
     icon: Icon,
+    as: Component = "button",
     ...props
 }) => {
     const variants = {
@@ -30,8 +31,8 @@ const Button = ({
     }
 
     return (
-        <button
-            type={type}
+        <Component
+            type={Component === 'button' ? type : undefined}
             onClick={onClick}
             disabled={disabled || loading}
             className={cn(
@@ -57,7 +58,7 @@ const Button = ({
                     {children}
                 </>
             )}
-        </button>
+        </Component>
     )
 }
 

@@ -100,7 +100,10 @@ export class LoanService {
             return await this.databases.listDocuments(
                 conf.appwriteDataBaseId,
                 conf.appwriteCollectionIDLoans,
-                [Query.equal("userId", userId)]
+                [
+                    Query.equal("userId", userId),
+                    Query.orderDesc('$createdAt')
+                ]
             );
         } catch (error) {
             console.log("Appwrite service :: getUserLoans :: error", error);

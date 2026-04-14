@@ -5,7 +5,7 @@ import { toast } from 'react-hot-toast';
 import issueService from '../appwrite/issue';
 import storageService from '../appwrite/storage';
 import { setLoading } from '../redux/uiSlice';
-
+import Button from '../components/shared/Button';
 const AdminIssues = () => {
     const dispatch = useDispatch();
     const user = useSelector((state) => state.auth.user);
@@ -35,9 +35,10 @@ const AdminIssues = () => {
             await issueService.updateIssue(issueId, { status: Number(newStatus) });
             
             const statusMap = {
-                1: 'In Progress',
-                2: 'Solved',
-                3: 'Cancelled'
+                1: 'Issued',
+                2: 'In Progress',
+                3: 'Solved',
+                4: 'Cancelled'
             };
             
             if (user?.$id) {
@@ -57,13 +58,30 @@ const AdminIssues = () => {
         }
     }
 
+    const handleDelete = async (issueId) => {
+        if (!window.confirm("Are you sure you want to delete this issue and all its comments?")) return;
+        
+        try {
+            dispatch(setLoading(true));
+            await issueService.deleteIssue(issueId);
+            toast.success("Issue deleted successfully");
+            fetchIssues();
+        } catch (error) {
+            toast.error("Failed to delete issue");
+        } finally {
+            dispatch(setLoading(false));
+        }
+    }
+
     const getStatusBadge = (status) => {
         switch (Number(status)) {
             case 1:
-                return <span className="px-3 py-1 bg-amber-100 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400 rounded-full text-xs font-bold">In Progress</span>;
+                return <span className="px-3 py-1 bg-indigo-100 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400 rounded-full text-xs font-bold">Issued</span>;
             case 2:
-                return <span className="px-3 py-1 bg-emerald-100 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 rounded-full text-xs font-bold">Solved</span>;
+                return <span className="px-3 py-1 bg-amber-100 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400 rounded-full text-xs font-bold">In Progress</span>;
             case 3:
+                return <span className="px-3 py-1 bg-emerald-100 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 rounded-full text-xs font-bold">Solved</span>;
+            case 4:
                 return <span className="px-3 py-1 bg-rose-100 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400 rounded-full text-xs font-bold">Cancelled</span>;
             default:
                 return <span className="px-3 py-1 bg-neutral-100 text-neutral-600 dark:bg-neutral-500/10 dark:text-neutral-400 rounded-full text-xs font-bold">Unknown</span>;
@@ -104,16 +122,24 @@ const AdminIssues = () => {
                             )}
                             <div className="flex-1 flex flex-col">
                                 <div className="flex justify-between items-start mb-3">
-                                    <h3 className="text-xl font-bold text-neutral-900 dark:text-white leading-tight">{issue.title}</h3>
+                                    <div className="space-y-1">
+                                        <div className="flex items-center gap-2">
+                                            <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider ${issue.type === 'bug' ? 'bg-rose-100 text-rose-600 dark:bg-rose-500/10' : issue.type === 'feature' ? 'bg-indigo-100 text-indigo-600 dark:bg-indigo-500/10' : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-500/10'}`}>
+                                                {issue.type || 'issue'}
+                                            </span>
+                                        </div>
+                                        <h3 className="text-xl font-bold text-neutral-900 dark:text-white leading-tight">{issue.title}</h3>
+                                    </div>
                                     <div className="ml-4 flex-shrink-0 flex items-center gap-3">
                                         <select 
                                             className="px-3 py-1 m-0 bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all dark:text-white text-sm font-bold cursor-pointer"
                                             value={issue.status}
                                             onChange={(e) => updateStatus(issue.$id, issue.status, e.target.value)}
                                         >
-                                            <option value="1">In Progress</option>
-                                            <option value="2">Solved</option>
-                                            <option value="3">Cancelled</option>
+                                            <option value="1">Issued</option>
+                                            <option value="2">In Progress</option>
+                                            <option value="3">Solved</option>
+                                            <option value="4">Cancelled</option>
                                         </select>
                                         {getStatusBadge(issue.status)}
                                     </div>
@@ -124,9 +150,19 @@ const AdminIssues = () => {
                                         <span className="text-neutral-400 dark:text-neutral-500">Reported on {new Date(issue.$createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                                         <span className="text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 px-2 py-1 rounded-lg">By: {issue.userId === user?.$id ? (user?.name || 'You') : `User (${issue.userId.substring(0,4)})`}</span>
                                     </div>
-                                    <Link to={`/issues/${issue.$id}`} className="px-4 py-2 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-500/10 dark:hover:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 rounded-xl transition-colors font-bold flex items-center gap-2">
-                                        View Details
-                                    </Link>
+                                    <div className="flex gap-2">
+                                        <Button 
+                                            variant="danger" 
+                                            size="sm"
+                                            onClick={() => handleDelete(issue.$id)}
+                                            className="px-4 py-2 text-xs"
+                                        >
+                                            Delete
+                                        </Button>
+                                        <Link to={`/issues/${issue.$id}`} className="px-4 py-2 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-500/10 dark:hover:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 rounded-xl transition-colors font-bold flex items-center gap-2">
+                                            View Details
+                                        </Link>
+                                    </div>
                                 </div>
                             </div>
                         </div>

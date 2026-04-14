@@ -38,7 +38,7 @@ class TransactionService {
             return await this.databases.listDocuments(
                 conf.appwriteDataBaseId,
                 conf.appwriteCollectionIDTransaction,
-                [Query.equal('user_id', userId), Query.orderDesc('$createdAt'), Query.select(["*", "categories.*", "accounts.*", "investments.*"])]
+                [Query.equal('user_id', userId), Query.orderDesc('$createdAt'), Query.select(["*", "categories.*", "accounts.*", "investments.*", "lonans.*"])]
             )
         } catch (error) {
             console.error("Appwrite service :: getTransactions :: error", error);
@@ -140,7 +140,7 @@ class TransactionService {
                     Query.greaterThanEqual('$createdAt', firstDay.toISOString()),
                     Query.lessThanEqual('$createdAt', lastDay.toISOString()),
                     Query.orderDesc('$createdAt'),
-                    Query.select(["*", "categories.*", "accounts.*", "investments.*"])
+                    Query.select(["*", "categories.*", "accounts.*", "investments.*", "lonans.*"])
                 ]
             )
 
@@ -195,7 +195,7 @@ class TransactionService {
                     Query.greaterThanEqual('$createdAt', firstDay.toISOString()),
                     Query.lessThanEqual('$createdAt', lastDay.toISOString()),
                     Query.orderDesc('$createdAt'),
-                    Query.select(["*", "categories.*", "accounts.*", "investments.*"])
+                    Query.select(["*", "categories.*", "accounts.*", "investments.*", "lonans.*"])
                 ]
             )
 
@@ -222,7 +222,7 @@ class TransactionService {
                     Query.lessThanEqual('$createdAt', lastDay.toISOString()),
                     Query.orderDesc('$createdAt'),
                     Query.limit(100),
-                    Query.select(["*", "categories.*", "accounts.*", "investments.*"])
+                    Query.select(["*", "categories.*", "accounts.*", "investments.*", "lonans.*"])
                 ]
             )
         } catch (error) {
@@ -237,7 +237,7 @@ class TransactionService {
                 Query.orderDesc('$createdAt'),
                 Query.offset(offset),
                 Query.limit(limit),
-                Query.select(["*", "categories.*", "accounts.*", "investments.*"])
+                Query.select(["*", "categories.*", "accounts.*", "investments.*", "lonans.*"])
             ];
 
             if (filters.type && filters.type !== 'all') {
@@ -272,11 +272,29 @@ class TransactionService {
                     Query.equal('user_id', userId),
                     Query.equal('investments', investmentId),
                     Query.orderDesc('$createdAt'),
-                    Query.select(["*", "categories.*", "accounts.*", "investments.*"])
+                    Query.select(["*", "categories.*", "accounts.*", "investments.*", "lonans.*"])
                 ]
             );
         } catch (error) {
             console.error("Appwrite service :: getTransactionsByInvestment :: error", error);
+            throw error;
+        }
+    }
+
+    async getTransactionsByLoan({ userId, loanId }) {
+        try {
+            return await this.databases.listDocuments(
+                conf.appwriteDataBaseId,
+                conf.appwriteCollectionIDTransaction,
+                [
+                    Query.equal('user_id', userId),
+                    Query.equal('lonans', loanId),
+                    Query.orderDesc('$createdAt'),
+                    Query.select(["*", "categories.*", "accounts.*", "investments.*", "lonans.*"])
+                ]
+            );
+        } catch (error) {
+            console.error("Appwrite service :: getTransactionsByLoan :: error", error);
             throw error;
         }
     }

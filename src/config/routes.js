@@ -13,6 +13,7 @@ import Issues from '../pages/Issues'
 import AdminIssues from '../pages/AdminIssues'
 import IssueDetails from '../pages/IssueDetails'
 import InvestmentDetails from '../pages/InvestmentDetails'
+import LoanDetails from '../pages/LoanDetails'
 
 
 /*
@@ -75,6 +76,12 @@ export const dashboardRoutes = [
         path: 'loans',
         element: Loans,
         name: 'Loans',
+        requiredLabel: 'premium'
+    },
+    {
+        path: 'loans/:id',
+        element: LoanDetails,
+        name: 'Loan Details',
         requiredLabel: 'premium'
     },
     {

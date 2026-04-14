@@ -28,6 +28,23 @@ const Issues = () => {
         }
     };
 
+    const handleDelete = async (e, id) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!window.confirm("Are you sure you want to delete this issue?")) return;
+
+        try {
+            dispatch(setLoading(true));
+            await issueService.deleteIssue(id);
+            toast.success("Issue deleted successfully");
+            setIssues(issues.filter(issue => issue.$id !== id));
+        } catch (error) {
+            toast.error("Failed to delete issue");
+        } finally {
+            dispatch(setLoading(false));
+        }
+    };
+
     useEffect(() => {
         fetchIssues();
 
@@ -45,10 +62,12 @@ const Issues = () => {
     const getStatusBadge = (status) => {
         switch (Number(status)) {
             case 1:
-                return <span className="px-3 py-1 bg-amber-100 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400 rounded-full text-xs font-bold">In Progress</span>;
+                return <span className="px-3 py-1 bg-indigo-100 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400 rounded-full text-xs font-bold">Issued</span>;
             case 2:
-                return <span className="px-3 py-1 bg-emerald-100 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 rounded-full text-xs font-bold">Solved</span>;
+                return <span className="px-3 py-1 bg-amber-100 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400 rounded-full text-xs font-bold">In Progress</span>;
             case 3:
+                return <span className="px-3 py-1 bg-emerald-100 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 rounded-full text-xs font-bold">Solved</span>;
+            case 4:
                 return <span className="px-3 py-1 bg-rose-100 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400 rounded-full text-xs font-bold">Cancelled</span>;
             default:
                 return <span className="px-3 py-1 bg-neutral-100 text-neutral-600 dark:bg-neutral-500/10 dark:text-neutral-400 rounded-full text-xs font-bold">Unknown</span>;
@@ -100,7 +119,14 @@ const Issues = () => {
                             )}
                             <div className="flex-1 flex flex-col">
                                 <div className="flex justify-between items-start mb-3">
-                                    <h3 className="text-xl font-bold text-neutral-900 dark:text-white leading-tight">{issue.title}</h3>
+                                    <div className="space-y-1">
+                                        <div className="flex items-center gap-2">
+                                            <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider ${issue.type === 'bug' ? 'bg-rose-100 text-rose-600 dark:bg-rose-500/10' : issue.type === 'feature' ? 'bg-indigo-100 text-indigo-600 dark:bg-indigo-500/10' : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-500/10'}`}>
+                                                {issue.type || 'issue'}
+                                            </span>
+                                        </div>
+                                        <h3 className="text-xl font-bold text-neutral-900 dark:text-white leading-tight">{issue.title}</h3>
+                                    </div>
                                     <div className="ml-4 flex-shrink-0">
                                         {getStatusBadge(issue.status)}
                                     </div>
@@ -108,9 +134,18 @@ const Issues = () => {
                                 <p className="text-neutral-600 dark:text-neutral-300 text-base whitespace-pre-wrap flex-1">{issue.desc}</p>
                                 <div className="mt-4 pt-4 border-t border-neutral-100 dark:border-neutral-700/50 text-sm font-bold text-neutral-400 dark:text-neutral-500 flex justify-between items-center w-full">
                                     <span>Reported on {new Date(issue.$createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-                                    <Link to={`/issues/${issue.$id}`} className="px-4 py-2 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-500/10 dark:hover:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 rounded-xl transition-colors font-bold flex items-center gap-2">
-                                        View Details
-                                    </Link>
+                                    <div className="flex gap-2">
+                                        <Button 
+                                            variant="danger" 
+                                            onClick={(e) => handleDelete(e, issue.$id)}
+                                            className="px-4 py-2 text-xs"
+                                        >
+                                            Delete
+                                        </Button>
+                                        <Link to={`/issues/${issue.$id}`} className="px-4 py-2 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-500/10 dark:hover:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 rounded-xl transition-colors font-bold flex items-center gap-2">
+                                            View Details
+                                        </Link>
+                                    </div>
                                 </div>
                             </div>
                         </div>

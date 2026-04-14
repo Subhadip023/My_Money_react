@@ -63,13 +63,30 @@ const IssueDetails = () => {
         }
     };
 
+    const handleDelete = async () => {
+        if (!window.confirm("Are you sure you want to delete this issue? This action cannot be undone.")) return;
+        
+        try {
+            dispatch(setLoading(true));
+            await issueService.deleteIssue(id);
+            toast.success("Issue deleted successfully");
+            navigate('/issues');
+        } catch (error) {
+            toast.error("Failed to delete issue");
+        } finally {
+            dispatch(setLoading(false));
+        }
+    };
+
     const getStatusBadge = (status) => {
         switch (Number(status)) {
             case 1:
-                return <span className="px-3 py-1 bg-amber-100 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400 rounded-full text-xs font-bold">In Progress</span>;
+                return <span className="px-3 py-1 bg-indigo-100 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400 rounded-full text-xs font-bold">Issued</span>;
             case 2:
-                return <span className="px-3 py-1 bg-emerald-100 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 rounded-full text-xs font-bold">Solved</span>;
+                return <span className="px-3 py-1 bg-amber-100 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400 rounded-full text-xs font-bold">In Progress</span>;
             case 3:
+                return <span className="px-3 py-1 bg-emerald-100 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 rounded-full text-xs font-bold">Solved</span>;
+            case 4:
                 return <span className="px-3 py-1 bg-rose-100 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400 rounded-full text-xs font-bold">Cancelled</span>;
             default:
                 return <span className="px-3 py-1 bg-neutral-100 text-neutral-600 dark:bg-neutral-500/10 dark:text-neutral-400 rounded-full text-xs font-bold">Unknown</span>;
@@ -92,6 +109,15 @@ const IssueDetails = () => {
                         <h1 className='text-4xl font-black tracking-tight'>Issue Details</h1>
                     </div>
                 </div>
+                <div className="flex items-center gap-3">
+                    <Button 
+                        variant="danger" 
+                        onClick={handleDelete}
+                        className="bg-rose-500 hover:bg-rose-600 text-white"
+                    >
+                        Delete Issue
+                    </Button>
+                </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -99,7 +125,14 @@ const IssueDetails = () => {
                 <div className="lg:col-span-1 space-y-6">
                     <div className="rounded-3xl border border-neutral-100 dark:border-neutral-700/50 bg-white/50 dark:bg-neutral-800/30 backdrop-blur-sm shadow-sm p-8">
                         <div className="flex justify-between items-start mb-6">
-                            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white leading-tight">{issue.title}</h2>
+                            <div className="space-y-1">
+                                <div className="flex items-center gap-2">
+                                    <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider ${issue.type === 'bug' ? 'bg-rose-100 text-rose-600 dark:bg-rose-500/10' : issue.type === 'feature' ? 'bg-indigo-100 text-indigo-600 dark:bg-indigo-500/10' : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-500/10'}`}>
+                                        {issue.type || 'issue'}
+                                    </span>
+                                </div>
+                                <h2 className="text-2xl font-bold text-neutral-900 dark:text-white leading-tight">{issue.title}</h2>
+                            </div>
                             <div className="ml-4 flex-shrink-0">
                                 {getStatusBadge(issue.status)}
                             </div>

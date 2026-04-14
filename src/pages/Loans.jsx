@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 import Button from '../components/shared/Button'
 import FloatingCard from '../components/ui/FlotingCard'
 import loanService from '../appwrite/loans'
@@ -159,7 +160,7 @@ export default function Loans() {
                                                 {loan.loanType.charAt(0).toUpperCase()}
                                             </div>
                                             <div>
-                                                <div className="font-bold text-neutral-900 dark:text-white uppercase tracking-tight">{loan.loanName}</div>
+                                                <Link to={`/loans/${loan.$id}`} className="font-bold text-neutral-900 dark:text-white uppercase tracking-tight hover:text-indigo-600 transition-colors cursor-pointer">{loan.loanName}</Link>
                                                 <div className="text-xs font-medium text-neutral-500 uppercase tracking-widest">{loan.loanType}</div>
                                             </div>
                                         </div>
@@ -194,6 +195,7 @@ export default function Loans() {
                                     </td>
                                     <td className='px-8 py-6 text-right'>
                                         <div className="flex gap-2 justify-end transition-opacity">
+                                            <Button variant="ghost" size="sm" as={Link} to={`/loans/${loan.$id}`}>View</Button>
                                             {Number(loan.outstandingAmount) > 0 && (
                                               <Button variant="emerald" size="sm" onClick={() => handlePayment(loan)}>Pay</Button>
                                             )}
